@@ -52,7 +52,7 @@ function pantallaJuego() {
   let camY = constrain(y - height / 2, 0, mapaAlto - height);
   
  push();
-  translate(-camX, -camY); // mueve el "mundo" para que el jugador quede centrado
+  translate(-camX, -camY); // mueve el "mundo" para que el jugador quede centrado al mover vista
   
   // guardo global para mapear mouse 
   camXGlobal = camX;
@@ -113,7 +113,6 @@ function pantallaJuego() {
   
   dibujarMunicionHUD();
 
-
   // instrucciones (cambia segun modo)
   push();
     textAlign(CENTER, CENTER);
@@ -127,6 +126,8 @@ function pantallaJuego() {
   pop();
   
   actualizarRecarga();
+
+  dibujarTablaLogros();
  
 }
 

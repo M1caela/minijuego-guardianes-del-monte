@@ -153,6 +153,10 @@ class Topadora {
     this.speed = 0;
     cambiarSaludMonte(+5);
 
+    // contabilizar local y enviar al servidor
+    topadorasLocales++;
+    enviarAccionAlServidor("topadora");
+
     topadorasDestruidas = (topadorasDestruidas || 0) + 1;
     console.log("Topadora destruida:", topadorasDestruidas);
 
@@ -287,6 +291,11 @@ class Fuego {
     if (this.hp <= 0) {
       this.activo = false;
       cambiarSaludMonte(+10);
+      
+      // contabilizar local y enviar al servidor
+      fuegosLocales++;
+      enviarAccionAlServidor("incendio");
+
     }
   }
 
@@ -459,9 +468,13 @@ function regarArboles() {
       if (a.etapa === 1) {
         a.etapa = 2;
         cambiarSaludMonte(+5);
+        riegosLocales++;
+        enviarAccionAlServidor("riego");
       } else if (a.etapa === 2) {
         a.etapa = 3;
         cambiarSaludMonte(+5);
+        riegosLocales++;
+        enviarAccionAlServidor("riego");
       }
       // solo regar 1 árbol por tecla
       logros.riegos.contador++;
@@ -501,6 +514,12 @@ function plantarNuevoArbol() {
   nuevosPlantados++;
   logros.plantar.contador++;
   cambiarSaludMonte(+5);
+  
+  // contabilizar local y enviar al servidor
+  animalesLocales++;
+  enviarAccionAlServidor("animal");
+
+
   console.log("Planteado nuevo árbol. total nuevos:", nuevosPlantados);
 
   // si llegamos al limite, desactivamr  modo

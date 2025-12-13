@@ -1,14 +1,14 @@
 // logros.js
 
-let logros = {
-  topadoras: { nombre: "Eliminar todas las topadoras", completado: false },
-  incendios: { nombre: "Apagar todos los incendios", completado: false },
-  riegos: { nombre: "Regar árboles 15 veces", completado: false, contador: 0 },
-  plantar: { nombre: "Plantar 3 árboles nuevos", completado: false, contador: 0 },
-  animal: { nombre: "Ayudar al animal", completado: false }
+const LOGROS_DEF = {
+  topadoras: "Eliminar todas las topadoras",
+  incendios: "Apagar todos los incendios",
+  riegos: "Regar árboles",
+  plantar: "Plantar árboles",
+  animal: "Ayudar al animal"
 };
 
-// valores locales espejo
+// valores locales espejo / origen de visual
 let topadorasLocales = 0;
 let fuegosLocales = 0;
 let riegosLocales = 0;
@@ -24,8 +24,36 @@ const REQ = {
   animales_ayudados: 1
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
 // partículas de estrellas (animaciones)
+
 let estrellasPool = []; // ParticulaEstrella instances
 
 class ParticulaEstrella {
@@ -80,132 +108,6 @@ function actualizarEstrellas() {
   }
 }
 */
-
-/* --------- Comunicación con el servidor --------- */
-
-// obtener JSON remoto y comparar con locales
-function cargarLogros() {
-  loadJSON("control.php", procesarLogros, function(err){ console.log("Error al cargar logros:", err); });
-}
-
-function actualizarLogros() {
-
-  // 1. Topadoras (logro cuando NO queda ninguna activa)
-  if (topadoras && topadoras.every(t => t.dead === true)) {
-    logros.topadoras.completado = true;
-  }
-
-  // 2. Incendios (logro cuando todas están apagadas)
-  if (fuegos && fuegos.every(f => f.activo === false)) {
-    logros.incendios.completado = true;
-  }
-
-  // 3. Riegos (contador → se completa al llegar a 15)
-  if (logros.riegos.contador >= 14) {
-    logros.riegos.completado = true;
-  }
-}
-
-// procesa la respuesta del servidor (data = { topadoras, fuegos_apagados, riegos, arboles_plantados, animales_ayudados })
-function procesarLogros(data) {
-  if (!data) return;
-  // comparar cada campo y disparar animaciones cuando haya diferencia positiva
-  if (data.topadoras !== undefined && data.topadoras > topadorasLocales) {
-    // posición para mostrar estrella: por defecto, encima del HUD (ajusta coords)
-    spawnEstrellas(width - 120, 60, data.topadoras - topadorasLocales);
-  }
-  if (data.fuegos_apagados !== undefined && data.fuegos_apagados > fuegosLocales) {
-    spawnEstrellas(width - 220, 60, data.fuegos_apagados - fuegosLocales);
-  }
-  if (data.riegos !== undefined && data.riegos > riegosLocales) {
-    spawnEstrellas(width - 320, 60, floor((data.riegos - riegosLocales)/3)); // agrupar riegos de a 3
-  }
-  if (data.arboles_plantados !== undefined && data.arboles_plantados > arbolesLocales) {
-    spawnEstrellas(width - 420, 60, data.arboles_plantados - arbolesLocales);
-  }
-  if (data.animales_ayudados !== undefined && data.animales_ayudados > animalesLocales) {
-    spawnEstrellas(width - 520, 60, data.animales_ayudados - animalesLocales);
-  }
-
-  // actualizar locales
-  topadorasLocales = data.topadoras || 0;
-  fuegosLocales = data.fuegos_apagados || 0;
-  riegosLocales = data.riegos || 0;
-  arbolesLocales = data.arboles_plantados || 0;
-  animalesLocales = data.animales_ayudados || 0;
-
-  // ver si todos los logros están cumplidos (comparar contra REQ)
-  let ok = true;
-  ok = ok && (topadorasLocales >= REQ.topadoras);
-  ok = ok && (fuegosLocales >= REQ.fuegos_apagados);
-  ok = ok && (riegosLocales >= REQ.riegos);
-  ok = ok && (arbolesLocales >= REQ.arboles_plantados);
-  ok = ok && (animalesLocales >= REQ.animales_ayudados);
-
-  if (ok) {
-    console.log("TODOS LOS LOGROS CUMPLIDOS -> GANAR");
-    gameState = "ganar";
-  }
-}
-
-// enviar una acción al servidor (por ejemplo cuando ocurre un evento en el juego)
-function enviarAccionAlServidor(accion, cantidad=1) {
-  fetch("control.php", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({accion: accion, cantidad: cantidad})
-  })
-  .then(r => r.json())
-  .then(j => {
-    // opcional: recargar el JSON para obtener el estado actualizado
-    cargarLogros();
-  })
-  .catch(e => console.log("Error enviarAccionAlServidor:", e));
-}
-
-function dibujarVentanaLogros() {
-  let logrosW = 220;
-  let logrosH = 140;
-  let logrosX = width - logrosW - 20; 
-  let logrosY = 20;
-
-  push();
-  rectMode(CORNER);
-
-  // Fondo
-  fill(60);
-  stroke(20);
-  strokeWeight(2);
-  rect(logrosX, logrosY, logrosW, logrosH, 8);
-
-  // Título
-  noStroke();
-  fill(255);
-  textSize(16);
-  textAlign(LEFT, TOP);
-  text("LOGROS", logrosX + 10, logrosY + 8);
-
-  // Lista
-  textSize(14);
-  let y = logrosY + 35;
-
-  for (let nombre in logros) {
-    let item = logros[nombre];
-    let check = item.completado ? "✔" : "□";
-    text(`${check} ${nombre}`, logrosX + 10, y);
-    y += 22;
-  }
-
-  pop();
-}
-
-/*  Llamá cargarLogros() periódicamente desde draw()  -  por ejemplo: if (frameCount % (60*5) === 0) cargarLogros(); // cada 5 segundos
- y en draw() llamá actualizarEstrellas() para dibujarlas */
-
-
-
-
- 
 
 
 

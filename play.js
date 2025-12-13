@@ -142,7 +142,8 @@ function draw() {
 
   // logica de estados //
   if (gameState === "inicio") {
-    pantallaInicio();
+    //pantallaJuego(); // solo para producir tabla de logros, dsp descomentar el de abajo
+     pantallaInicio();
   } 
   else if (gameState === "elegirJugador") {
     pantallaElegir();
@@ -417,34 +418,120 @@ function verificarCamposCompletos() {
 
 // si se eligió personaje y se presionó siguiente > inicia juego
 function irAJuego() {
+  // guardar nombre del input
   nombreUsuario = inputNombre.value();
 
-  // guardar nombre del usuario y crear partida en BDD
-  fetch("crearPartida.php", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ nombre: nombreUsuario })
-  })
-  .then(r => r.json())
-  .then(data => console.log("PHP:", data));
-
   // inicializar partida y elementos
+  crearPartida();
   gameState = "juego";
   initArboles();
   initTopadoras();
   initMonte();
 }
 
-// cuando se completa un logro/tarea
-function actualizarTareasServidor() {
+function crearPartida() {
+  fetch("crearPartida.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nombre: nombreUsuario })
+  })
+  .then(res => res.json())
+  .then(data => {
+    partidaId = data.partida_id;
+    console.log("Partida creada:", partidaId);
+  });
+}
+
+function dibujarTablaLogros() {
+  push();
+
+  let tablaW = 240;
+  let tablaH = 170;
+  let tablaX = width - tablaW - 20;
+  let tablaY = 20;
+
+  // fondo
+  fill(60);
+  rect(tablaX, tablaY, tablaW, tablaH, 8);
+
+  // título
+  fill(255);
+  textSize(16);
+  textAlign(LEFT, TOP);
+  text("Logros", tablaX + 10, tablaY + 8);
+
+  textSize(13);
+  let y = tablaY + 36;
+
+  // 1. Topadoras
+  let okTop = topadorasLocales >= REQ.topadoras;
+  text(
+    (okTop ? "✓ " : "□ ") +
+    `Eliminar topadoras (${topadorasLocales}/${REQ.topadoras})`,
+    tablaX + 10, y
+  );
+  y += 22;
+
+  // 2. Incendios
+  let okFuego = fuegosLocales >= REQ.fuegos_apagados;
+  text(
+    (okFuego ? "✓ " : "□ ") +
+    `Apagar incendios (${fuegosLocales}/${REQ.fuegos_apagados})`,
+    tablaX + 10, y
+  );
+  y += 22;
+
+  // 3. Riegos
+  let okRiego = riegosLocales >= REQ.riegos;
+  text(
+    (okRiego ? "✓ " : "□ ") +
+    `Regar árboles (${riegosLocales}/${REQ.riegos})`,
+    tablaX + 10, y
+  );
+  y += 22;
+
+  // 4. Plantar árboles
+  let okPlantar = arbolesLocales >= REQ.arboles_plantados;
+  text(
+    (okPlantar ? "✓ " : "□ ") +
+    `Plantar árboles (${arbolesLocales}/${REQ.arboles_plantados})`,
+    tablaX + 10, y
+  );
+  y += 22;
+
+  // 5. Animal
+  let okAnimal = animalesLocales >= REQ.animales_ayudados;
+  text(
+    (okAnimal ? "✓ " : "□ ") +
+    `Ayudar animal (${animalesLocales}/${REQ.animales_ayudados})`,
+    tablaX + 10, y
+  );
+
+  pop();
+}
+
+function enviarAccionAlServidor(tipo) {
   fetch("actualizarTareas.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      id_partida: idPartida,
-      tareas: logros //  objeto de logros
+      partida_id: partidaId,
+      accion: tipo
     })
   });
+}
+
+function actualizarLogros() {
+  logros.topadoras.completado = topadorasLocales >= REQ.topadoras;
+  logros.incendios.completado = fuegosLocales >= REQ.fuegos_apagados;
+  logros.riegos.completado = riegosLocales >= REQ.riegos;
+  logros.plantar.completado = arbolesLocales >= REQ.arboles_plantados;
+  logros.animal.completado = animalesLocales >= REQ.animales_ayudados;
+}
+
+function todosLosLogrosCompletados() {
+  return Object.values(logros).every(l => l.completado);
+  finalizarPartida();
 }
 
 // al terminar juego
@@ -453,9 +540,9 @@ function finalizarPartida() {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      id_partida: idPartida,
-      puntaje: saludMonte,
-      tiempo: floor((millis() - tiempoInicio) / 1000)
+      partida_id: partidaId,
+      puntaje_final: saludMonte,
+      tiempo_partida: tiempoTotal
     })
   });
 }
