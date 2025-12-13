@@ -57,6 +57,10 @@ let nombreUsuario = "";
 let botonSiguiente;
 let avatarElegido = false;
 
+// partidas
+let idPartida = null;
+
+
 
 ///////////////////////////   IMAGENES Y SONIDO  ///////////////////////////
 function preload() {
@@ -411,35 +415,51 @@ function verificarCamposCompletos() {
   }
 }
 
-// si se eligió personaje, se envió nombre y se presionó siguiente > inicia juego
+// si se eligió personaje y se presionó siguiente > inicia juego
 function irAJuego() {
-
   nombreUsuario = inputNombre.value();
-  guardarNombre();
-  console.log("Nombre guardado:", nombreUsuario);
 
-  // iniciar partida
-  
+  // guardar nombre del usuario y crear partida en BDD
+  fetch("crearPartida.php", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ nombre: nombreUsuario })
+  })
+  .then(r => r.json())
+  .then(data => console.log("PHP:", data));
 
+  // inicializar partida y elementos
   gameState = "juego";
   initArboles();
   initTopadoras();
   initMonte();
 }
 
-// enviar nombre a base de datos via PHP
-function guardarNombre() {
-  nombreUsuario = inputNombre.value();
-
-  // Enviar a PHP
-  fetch("guardarNombre.php", {
+// cuando se completa un logro/tarea
+function actualizarTareasServidor() {
+  fetch("actualizarTareas.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nombre: nombreUsuario })
-  })
-  .then(res => res.text())
-  .then(txt => console.log("Servidor:", txt));
+    body: JSON.stringify({
+      id_partida: idPartida,
+      tareas: logros //  objeto de logros
+    })
+  });
 }
+
+// al terminar juego
+function finalizarPartida() {
+  fetch("finalizarPartida.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      id_partida: idPartida,
+      puntaje: saludMonte,
+      tiempo: floor((millis() - tiempoInicio) / 1000)
+    })
+  });
+}
+
 
 ///////////////////////////      SONIDO             ///////////////////////////
 

@@ -21,7 +21,7 @@ let aimWorldX = 0, aimWorldY = 0;
 let maxMunicion = 10;        // cantidad total de tiros
 let municionActual = 10;     // empieza lleno
 let recargando = false;      // para saber si está recargando
-let tiempoRecarga = 8000;    // 8 segundos 
+let tiempoRecarga = 6000;    // 6 segundos 
 let tiempoInicioRecarga = 0; // cuándo comenzó a recargarse
 
 
@@ -159,7 +159,7 @@ class Topadora {
     // si ya alcanzamos la meta, iniciar fuego y no spawnear más
     if (topadorasDestruidas >= totalTopadorasMeta && !fuegoIniciado) {
       fuegoIniciado = true;
-      console.log(" FUEGO INICIADO ");
+      console.log(" Fuego iniciado! ");
       initFuegos();
     } else {
       // si todavía no llegamos a la meta,  spawnear nueva
@@ -223,7 +223,7 @@ function actualizarProyectiles() {
 
     // detectar colisión con topadoras 
     for (let j = 0; j < topadoras.length; j++) {
-  let t = topadoras[j];
+    let t = topadoras[j];
     if (!t || t.dead || !t.active) continue;
       if (p.x > t.x - 60 && p.x < t.x + 60 && p.y > t.y - 40 && p.y < t.y + 40) {
       t.recibirImpacto();
@@ -264,7 +264,7 @@ class Fuego {
   update() {
     if (!this.activo) return;
 
-    // leve oscilación visual
+    // movimiento leve 
     this.y += sin((frameCount + this.x * 0.1) * 0.1) * 0.3;
 
     // daño gradual mienras esta activo
@@ -277,13 +277,6 @@ class Fuego {
 
       if (totalDamage > 0) cambiarSaludMonte(-totalDamage);
       this.lastDamageTime += ticks * fuegoTickInterval;
-    }
-
-    // si está apagado
-    if (this.hp <= 0) {
-      this.activo = false;
-      cambiarSaludMonte(+10); // recompensa
-    
     }
   }
 
@@ -336,7 +329,7 @@ function initFuegos() {
   fuegoActivo = true;
   fuegoDerrotado = false;
 
-  // desactivar todas las topadoras activas 
+  // asegurarse de topadoras inactivas
   for (let t of topadoras) {
     t.active = false;
     if (!t.dead) t.iniciarMuerte();
@@ -374,7 +367,7 @@ function actualizarAgua() {
       continue;
     }
 
-    // dibujar el chorro
+    // dibujar el disparo de agua
     noStroke();
     fill(100, 180, 255, 200);
     ellipse(p.x, p.y, p.r * 2.5);
@@ -462,7 +455,7 @@ function regarArboles() {
     if (!a.vivo) continue;
 
     let d = dist(x, y, a.x, a.y);
-    if (d < 80) { // si personaje está cerca de arbol
+    if (d < 80) { // si personaje está cerca de arbol puede regar
       if (a.etapa === 1) {
         a.etapa = 2;
         cambiarSaludMonte(+5);

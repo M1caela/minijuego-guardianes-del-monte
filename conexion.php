@@ -7,10 +7,11 @@ $user = "root";
 $pass = "";
 $db   = "minijuego"; 
 
-$mysqli = new mysqli($host, $user, $pass, $db);
-if ($mysqli->connect_errno) {
+$cn = new mysqli($host, $user, $pass, $db);
+
+if ($cn->connect_error) {
     http_response_code(500);
-    echo "Error de conexión: " . $mysqli->connect_error;
+    echo "Error de conexión: " . $cn->connect_error;
     exit;
 }
 

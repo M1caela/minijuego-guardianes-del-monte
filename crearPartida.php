@@ -1,9 +1,15 @@
 <?php
 header("Content-Type: application/json");
-require "conexion.php";
+include "conexion.php";
 
 $data = json_decode(file_get_contents("php://input"), true);
-$nombre = trim($data["nombre"]);
+
+if (!$data || !isset($data["nombre"])) {
+  echo json_encode(["error" => "Datos incompletos"]);
+  exit;
+}
+
+$nombre = $data["nombre"];
 
 $stmt = $cn->prepare(
   "INSERT INTO partidas (nombre, fecha) VALUES (?, NOW())"

@@ -2,7 +2,7 @@
 
 let monteMaxHealth = 100;   // valor máximo de salud 
 let monteHealth = 20;      // salud  inicial
-let monteWinThreshold = 99; // si llega ganar
+let monteWinThreshold = 100; // si llega ganar
 let monteLoseThreshold = 1; // si llega perder
 
 
@@ -10,7 +10,7 @@ let monteLoseThreshold = 1; // si llega perder
 function initMonte() {
   monteMaxHealth = 100;
   monteHealth = 20;
-  monteWinThreshold = 99;
+  monteWinThreshold = 100;
   monteLoseThreshold = 1;
 }
 
@@ -68,7 +68,7 @@ function plantarArbol(px, py) {
 
 function topadoraDestruyeTree(treeIndex) {
   arbolesDestruidos++;
-  cambiarSaludMonte(-12);  // talar resta salud 
+  cambiarSaludMonte(-13);  // talar resta salud 
 }
 
 // instruccciones - cambia msj segun evento
