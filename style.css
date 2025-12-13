@@ -1,0 +1,30 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  display: block;
+    border: solid 20px rgb(60,85,54);
+  border-radius: 10px;
+}
+
+
+.btn-siguiente {
+  position: absolute;  
+  left: 300px;
+  top: 500px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 16px;
+  padding: 10px 15px;
+  background-color: rgb(60, 85, 54);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-siguiente:hover {
+  background-color: rgb(70, 105, 64);
+}
+
