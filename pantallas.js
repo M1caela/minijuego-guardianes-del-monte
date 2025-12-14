@@ -91,7 +91,7 @@ function pantallaJuego() {
     dibujarFuegos();       
     dibujarProyectiles(); 
     verificarModoPlantar();
-    
+
     // animal una vez que no hay fuego
     dibujarAnimal();
 
@@ -155,6 +155,7 @@ function pantallaGanar() {
     textSize(40);
     text("¡El monte respira otra vez!", width / 2, height / 2 - 50);
 
+    botonVerRanking(); // mostrar botón ranking
     textSize(24);
     text("Presioná ESPACIO", width / 2, height / 2 + 60);
   pop();
@@ -171,6 +172,7 @@ function pantallaPerder() {
     textSize(40);
     text("El monte fue destruido.", width / 2, height / 2 - 50);
 
+    botonVerRanking(); // mostrar botón ranking
     textSize(24);
     text("Presioná ESPACIO", width / 2, height / 2 + 60);
   pop();
@@ -189,6 +191,7 @@ function pantallaPerderTiempo() {
     textSize(30);
     text("¡Seguí intentando!", width / 2, height / 2 - 30);
 
+    botonVerRanking(); // mostrar botón ranking
     textSize(24);
     text("Presioná ESPACIO", width / 2, height / 2 + 60);
   pop();
@@ -242,4 +245,59 @@ function pantallaInformacion() {
     text("Presioná C para ver los créditos y volver al inicio", width / 2, 530);
   pop();
   
+}
+
+function pantallaRanking() {
+  ocultarInput();
+  push();
+  background(20, 40, 20);
+  fill('white'); 
+   textAlign(CENTER, CENTER);
+    push();
+      fill(200);
+      textSize(34);
+      textFont("bungee"); 
+      text("Ranking de Guardianes", width / 2, 80);
+    pop();
+  
+    textSize(20);
+    text("Mejores Puntajes", width / 2, 130);
+  
+    // Encabezados de tabla
+    textSize(18);
+    fill(150, 200, 150);
+    text("Pos", width / 2 - 150, 180);
+    text("Nombre", width / 2, 180);
+    text("Puntaje", width / 2 + 150, 180);
+
+    // Línea separadora
+    stroke(150, 200, 150);
+    line(width / 2 - 200, 200, width / 2 + 200, 200);
+    noStroke();
+
+    // Mostrar los datos del ranking
+    let startY = 230;
+    let lineHeight = 40;
+    fill(255);
+
+    if (!ranking || ranking.length === 0) {
+      text("Cargando...", width / 2, startY);
+    } else {
+    for (let i = 0; i < ranking.length; i++) {
+      let r = ranking[i];
+      let y = startY + i * lineHeight;
+      
+      text(i + 1, width / 2 - 150, y);
+      text(r.nombre, width / 2, y);
+      text(r.puntaje_final, width / 2 + 150, y);
+    }
+    }
+    
+    push();
+      textSize(18);
+      fill(200);
+      textAlign(CENTER, CENTER);
+      text("Presioná I para volver al inicio.", width/2, height - 50);
+    pop();
+  pop();
 }

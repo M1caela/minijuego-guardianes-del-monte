@@ -57,14 +57,16 @@ let prevGameState = "";  // para detectar transiciones de estado
 let inputNombre;
 let nombreUsuario = "";
 let botonSiguiente;
+let botonRanking;
 let avatarElegido = false;
 
 // partidas
 let idPartida = null;
+let ranking = []; // guardar los datos JSON
 
 // temporizador de partida
 let inicioPartida = 0;
-let tiempoMaximo = 10 * 60 * 1000; // 10 minutos en ms
+let tiempoMaximo = 5 * 60 * 1000; // 5 minutos en ms
 let tiempoRestante = tiempoMaximo;
 
 
@@ -148,11 +150,15 @@ function setup() {
   botonSiguiente.hide();
   botonSiguiente.mousePressed(irAJuego);
 
-  //  debug
-  console.log("Datos del GIF:", estrellaGif);
-  console.log("Ancho:", estrellaGif.width);
-  console.log("Alto:", estrellaGif.height);
-
+  // BOTÓN RANKING
+  botonRanking = createButton("Ver Ranking");
+  botonRanking.style("position", "absolute");
+  botonRanking.class("btn-siguiente"); 
+  botonRanking.hide();
+  botonRanking.mousePressed(() => {
+    cargarRanking();
+    gameState = "ranking";
+  });
 }
 
 
@@ -259,8 +265,15 @@ function keyPressed() {
   // desde créditos volver a inicio
   if (gameState === "creditos") {
     if (key === 'i' || key === 'I') {
-      gameState = "inicio";
       resetGame(); //  reinicia todo 
+      gameState = "inicio";
+      return;
+    }
+  }
+
+  if (gameState === "ranking") {
+    if (key === 'i' || key === 'I') {
+      gameState = "inicio";
       return;
     }
   }
@@ -433,6 +446,7 @@ function mostrarInput() {
 function ocultarInput() {
   inputNombre.hide();
   botonSiguiente.hide();
+  if (botonRanking) botonRanking.hide();
 }
 
 function verificarCamposCompletos() {
@@ -475,12 +489,35 @@ function crearPartida() {
   });
 }
 
+// LEER JSON DESDE PHP //
+function cargarRanking() {
+  loadJSON('obtenerRanking.php', (data) => {
+    ranking = data; // Guarda los datos en la variable global
+    console.log("Ranking cargado:", ranking);
+    
+    // Ejemplo: Si quisieras crear objetos visuales basados en estos datos:
+    // for (let r of ranking) { ... crearObjeto(r.nombre, r.puntaje_final) ... }
+
+    /*
+      llamar para q la variable ranking se llene con la lista de jugadores traída desde la base de datos.[
+      { "id": 1, "nombre": "Martín", "puntaje_final": 100 },
+      { "id": 5, "nombre": "Ana", "puntaje_final": 95 }
+    */
+
+  });
+}
+
+function botonVerRanking() {
+  if (botonRanking) {
+    botonRanking.show();
+    botonRanking.position(width / 2 - 60, height / 2 + 110);
+  }
+}
+
 // TEMPORIZADOR DEL JUEGO //
 function actualizarTemporizador() {
   let ahora = millis();
   tiempoRestante = tiempoMaximo - (ahora - inicioPartida);
-
-
 }
 
 function dibujarTemporizador() {
