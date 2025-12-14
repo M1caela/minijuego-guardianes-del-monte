@@ -179,6 +179,7 @@ function draw() {
     pantallaPerder();
   }
    else if (gameState === "perderTiempo") {
+    checkGameStateSounds();
     pantallaPerderTiempo();
   }
    else if (gameState === "informacion") {
@@ -469,7 +470,7 @@ function crearPartida() {
   })
   .then(res => res.json())
   .then(data => {
-    partidaId = data.partida_id;
+    partidaId = data.id_partida;
     console.log("Partida creada:", partidaId);
   });
 }
@@ -701,13 +702,20 @@ function actualizarRecarga() {
 // FINALIZAR PARTIDA - enviar datos al servidor //
 
 function finalizarPartida() {
+  if (!partidaId) return;
+
   fetch("finalizarPartida.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       partida_id: partidaId,
-      puntaje_final: saludMonte,
-      tiempo_partida: tiempoTotal
+      puntaje_final: monteHealth,
+      tiempo_partida: floor((millis() - inicioPartida) / 1000), // tiempo en segundos
+      topadoras_eliminadas: topadorasLocales,
+      incendios_apagados: fuegosLocales,
+      riegos: riegosLocales,
+      arboles_plantados: arbolesLocales,
+      animales_ayudados: animalesLocales
     })
   });
 }
@@ -748,12 +756,16 @@ function controlarSonido() {
 function checkGameStateSounds() {
   if (prevGameState !== gameState) {
     // cambio de estado detectado
+    if (gameState === "ganar" || gameState === "perder" || gameState === "perderTiempo") {
+      finalizarPartida(); // Guardar datos al terminar
+    }
+
     if (gameState === "ganar") {
       if (cancionGanar) {
         if (cancionAmbiente && cancionAmbiente.isPlaying()) cancionAmbiente.pause();
         cancionGanar.play();
       }
-    } else if (gameState === "perder") {
+    } else if (gameState === "perder" || gameState === "perderTiempo") {
       if (cancionPerder) {
         if (cancionAmbiente && cancionAmbiente.isPlaying()) cancionAmbiente.pause();
         cancionPerder.play();
