@@ -111,7 +111,7 @@ function dibujarMunicionHUD() {
   if (recargando) {
     let t = (tiempoRecarga - (millis() - tiempoInicioRecarga)) / 1000;
     t = max(0, t).toFixed(1);
-    text("Tiros: recargando... (" + t + "s)", 20, 60);
+    text("Tiros: recargando... (" + t + "s)", 20, 78);
   } else {
     text("Tiros: " + municionActual + "/" + maxMunicion, 20, 60);
   }

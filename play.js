@@ -486,11 +486,16 @@ function dibujarTemporizador() {
   let textoTiempo =
     nf(minutos, 2) + ":" + nf(segundos, 2);
 
+  // ubicar a la derecha de la barra de vida
+  let bx = 20, by = 20, bw = 240, bh = 18;
+  let tiempoX = bx + bw + 60;
+  let tiempoY = by + bh / 2 - 6;
+
   push();
   fill(255);
   textSize(16);
   textAlign(RIGHT, TOP);
-  text(textoTiempo, width - 20, 20);
+  text(textoTiempo, tiempoX, tiempoY);
   pop();
 }
 
