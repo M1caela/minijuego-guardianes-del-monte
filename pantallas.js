@@ -129,6 +129,8 @@ function pantallaJuego() {
   dibujarTablaLogros();
   actualizarLogros();
 
+  chequearEstadoMonte();
+
   // contador de tiempo
   actualizarTemporizador();
   dibujarTemporizador();
@@ -189,7 +191,7 @@ function pantallaPerderTiempo() {
     textAlign(CENTER, CENTER);
     fill(255);
     textSize(40);
-    text("Se acabó el tiempo y el monte no fue restaurado.", width / 2, height / 2 - 50);
+    text("Se acabó el tiempo\ny el monte no fue restaurado.", width / 2, height / 2 - 50);
     textSize(30);
     text("¡Seguí intentando!", width / 2, height / 2 - 30);
 

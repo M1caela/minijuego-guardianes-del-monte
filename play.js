@@ -472,10 +472,7 @@ function actualizarTemporizador() {
   let ahora = millis();
   tiempoRestante = tiempoMaximo - (ahora - inicioPartida);
 
-  if (tiempoRestante <= 0) {
-    tiempoRestante = 0;
-    gameState = "perderTiempo";
-  }
+
 }
 
 function dibujarTemporizador() {
@@ -649,7 +646,7 @@ function actualizarLogros() {
 }
 
 function todosLosLogrosCompletados() {
-  return Object.values(logros).every(l => l.completado);
+  return Object.values(logrosCompletados).every(l => l === true);
 }
 
 // ANIMACION AL CONSEGUIR LOGRO //

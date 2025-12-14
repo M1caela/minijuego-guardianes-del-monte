@@ -55,9 +55,12 @@ function dibujarBarraMonte() {
 function chequearEstadoMonte() {
   if (monteHealth <= monteLoseThreshold) {
     gameState = "perder";
-  } else if (monteHealth >= monteWinThreshold) {  // esto modificar para que sea 100 de vida + TODOS LOS LOGROS COMPLETOS 
+  } else if (monteHealth >= monteWinThreshold && todosLosLogrosCompletados()) {
     gameState = "ganar";
-  } // agregar else if "Al finalizar el tiempo sin completar todas las tareas → Perder (msj personalizado según porcentaje de tareas completas)"
+  } else if (tiempoRestante <= 0) {
+    tiempoRestante = 0;
+    gameState = "perderTiempo";
+  }
 }
 
 //  Acciones del juego que afectan la salud // 
@@ -111,9 +114,9 @@ function dibujarMunicionHUD() {
   if (recargando) {
     let t = (tiempoRecarga - (millis() - tiempoInicioRecarga)) / 1000;
     t = max(0, t).toFixed(1);
-    text("Tiros: recargando... (" + t + "s)", 20, 78);
+    text("Tiros: recargando... (" + t + "s)", 20, 62);
   } else {
-    text("Tiros: " + municionActual + "/" + maxMunicion, 20, 60);
+    text("Tiros: " + municionActual + "/" + maxMunicion, 20, 62);
   }
 
   pop();
