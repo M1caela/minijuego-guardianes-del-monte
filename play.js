@@ -13,6 +13,7 @@ let fondoPerder;
 let topadoraImg; 
 let imgBrote, imgArbolMedio, imgArbolGrande; 
 let estrellaGif;
+let coatiLastimado, coatiCurado;
 let fuegoImg;
 
 // fondo / mapa
@@ -93,6 +94,10 @@ function preload() {
   // topadora
   topadoraImg = loadImage("img/topadora.png");
   fuegoImg = loadImage("img/fuego.png");
+
+  // animal
+  coatiLastimado = loadImage("img/coati-lastimado.png");
+  coatiCurado = loadImage("img/coati-curado.png");
   
   // fondos
   fondoInicio = loadImage("img/fondo-inicio.jpg")
@@ -189,7 +194,6 @@ function draw() {
 }
 
 
-
 /////////////////////////   FUNCIONES DE USUARIO   ///////////////////////////
 
 // keyPressed centralizado por estados //
@@ -229,6 +233,10 @@ function keyPressed() {
     // plantar nuevo árbol 
     if (key === 'p' || key === 'P') {
       plantarNuevoArbol();
+    }
+
+     if (key === 'a' || key === 'A') {
+      intentarAyudarAnimal();
     }
  }
   

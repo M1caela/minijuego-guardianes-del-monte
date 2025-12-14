@@ -51,61 +51,66 @@ function pantallaJuego() {
   let camX = constrain(x - width / 2, 0, mapaAncho - width);
   let camY = constrain(y - height / 2, 0, mapaAlto - height);
   
- push();
-  translate(-camX, -camY); // mueve el "mundo" para que el jugador quede centrado al mover vista
-  
-  // guardo global para mapear mouse 
-  camXGlobal = camX;
-  camYGlobal = camY;
+  push();
+    translate(-camX, -camY); // mueve el "mundo" para que el jugador quede centrado al mover vista
+    
+    // guardo global para mapear mouse 
+    camXGlobal = camX;
+    camYGlobal = camY;
 
-  // actualizo las coordenadas del mouse en coordenadas de mundo
-  aimWorldX = mouseX + camXGlobal;
-  aimWorldY = mouseY + camYGlobal;
-  
-  // fondo del mapa 
-  image(fondoGrande, 0, 0, mapaAncho, mapaAlto);
-  
-  // Árboles
-  dibujarArboles();
-  arboles = arboles.filter(a => !a.desaparecio());
+    // actualizo las coordenadas del mouse en coordenadas de mundo
+    aimWorldX = mouseX + camXGlobal;
+    aimWorldY = mouseY + camYGlobal;
+    
+    // fondo del mapa 
+    image(fondoGrande, 0, 0, mapaAncho, mapaAlto);
+    
+    // Árboles
+    dibujarArboles();
+    arboles = arboles.filter(a => !a.desaparecio());
 
-  // jugador
-  moverJugador();
-  dibujarJugador();
-  
-  // actualizar y dibujar topadoras
- for (let i = topadoras.length - 1; i >= 0; i--) {
-  let t = topadoras[i];
-  t.update();
-  t.draw();
-  if (!t.active && t.dead) {
-    topadoras.splice(i, 1);
-  }
-  }
-  
-  // fuego y proyectiles
-  actualizarFuegos();       
-  actualizarProyectiles();
-  actualizarAgua();      
-  
-  dibujarFuegos();       
-  dibujarProyectiles();
-  
-  // punteria del tiro
-  if (isAiming) {
-      stroke(255, 200, 40);
-      strokeWeight(2);
-      line(x, y, aimWorldX, aimWorldY);
-      noStroke();
-      fill(255, 200, 40);
-      ellipse(aimWorldX, aimWorldY, 8);
+    // jugador
+    moverJugador();
+    dibujarJugador();
+    
+    // actualizar y dibujar topadoras
+    for (let i = topadoras.length - 1; i >= 0; i--) {
+      let t = topadoras[i];
+      t.update();
+      t.draw();
+      if (!t.active && t.dead) {
+        topadoras.splice(i, 1);
+      }
     }
-  
-  // espacio que ocupan los objetos del mapa (arbol, casita..) 
-  for (let o of objetos) {
-    noFill();
-    rect(o.x, o.y, o.w, o.h); 
-  } 
+    
+    // fuego y proyectiles
+    actualizarFuegos();       
+    actualizarProyectiles();
+    actualizarAgua();      
+    
+    dibujarFuegos();       
+    dibujarProyectiles(); 
+    verificarModoPlantar();
+
+    // animal una vez que no hay fuego
+    dibujarAnimal();
+
+    // punteria del tiro
+    if (isAiming) {
+        stroke(255, 200, 40);
+        strokeWeight(2);
+        line(x, y, aimWorldX, aimWorldY);
+        noStroke();
+        fill(255, 200, 40);
+        ellipse(aimWorldX, aimWorldY, 8);
+    }
+    
+    // espacio que ocupan los objetos del mapa (arbol, casita..) 
+    for (let o of objetos) {
+      noFill();
+      rect(o.x, o.y, o.w, o.h); 
+    } 
+
   pop();
   
   // instrucciones (cambia segun modo)
@@ -120,7 +125,7 @@ function pantallaJuego() {
     }
   pop();
 
-    // barra de vida y tiros restantes
+  // barra de vida y tiros restantes
   dibujarBarraMonte(); 
   dibujarMunicionHUD();
   actualizarRecarga();
@@ -134,7 +139,6 @@ function pantallaJuego() {
   // contador de tiempo
   actualizarTemporizador();
   dibujarTemporizador();
-
  
 }
 

@@ -353,7 +353,6 @@ function actualizarFuegos() {
     if (fuegos.every(f => !f.activo)) {
       fuegoActivo = false;
       fuegoDerrotado = true;
-      puedePlantar = true; // habilitar modo plantar
       console.log("Modo plantar activado.");
     }
  }
@@ -492,9 +491,17 @@ function verificarModoPlantar() {
   let sinFuego = !fuegos || fuegos.every(f => !f.activo);
   let iniciales = arboles.filter(a => a.isInitial);
   let inicialesOk = iniciales.length > 0 && iniciales.every(a => !a.vivo || a.etapa === 3);
+
   if (sinFuego && inicialesOk && nuevosPlantados < maxNuevosArboles) {
     puedePlantar = true;
     console.log("Árboles plantados:", nuevosPlantados);
+
+    //  activar animal para ayudar una vez que se apagaron fuegos
+    if (!animalActivo && !animalAyudado) {
+      crearAnimal();
+      console.log("Se creó nuevo animal en mapa.");
+    }
+
   }
 }
 
@@ -528,4 +535,48 @@ function plantarNuevoArbol() {
   }
 }
 
-//////////////////////////////////////////          x            //////////////////////////////////////////
+//////////////////////////////////////////          ANIMAL            //////////////////////////////////////////
+
+let animal = null;          // referencia al animal
+let animalActivo = false;  // aparece o no en el mapa
+let animalAyudado = false; // logro
+
+function crearAnimal() {
+  animal = {
+    x: 250,
+    y: 430,
+    curado: false
+  };
+  animalActivo = true;
+}
+
+function dibujarAnimal() {
+  if (!animalActivo || !animal) return;
+
+  push();
+  imageMode(CENTER);
+  if (animal.curado) {
+    image(coatiCurado, animal.x, animal.y, 100, 100);
+  } else {
+    image(coatiLastimado, animal.x, animal.y, 100, 100);
+  }
+  pop();
+}
+
+function intentarAyudarAnimal() {
+  if (!animalActivo || !animal || animal.curado) return;
+
+  let d = dist(x, y, animal.x, animal.y);
+  if (d < 80) {
+    animal.curado = true;
+    animalAyudado = true;
+    animalActivo = false;
+
+    animalesLocales++; // contador de logros
+    enviarAccionAlServidor("animal", 1);
+
+    console.log("Animal ayudado");
+  }
+}
+
+

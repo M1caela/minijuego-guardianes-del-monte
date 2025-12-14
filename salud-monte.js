@@ -54,15 +54,15 @@ function dibujarBarraMonte() {
 // Chequea condiciones y cambia gameState si corresponde
 function chequearEstadoMonte() {
   if (monteHealth <= monteLoseThreshold) {
-    gameState = "perder";
+    gameState = "perder"; // Al llegar a 0% de salud → Perder → Puntaje 0%
   } else if (monteHealth >= monteWinThreshold && todosLosLogrosCompletados()) {
-    gameState = "ganar";
+    gameState = "ganar"; // Si vida al 100% y todos los logros completados → Ganar → Puntaje 100%
   } else if (tiempoRestante <= 0) {
     tiempoRestante = 0;
-    gameState = "perderTiempo";
-  }
+    gameState = "perderTiempo"; // Si finaliza el tiempo sin completar todas las tareas → Perder  → Puntaje calculable
 }
-
+}
+  
 //  Acciones del juego que afectan la salud // 
 function plantarArbol(px, py) {
   arbolesPlantados++;
@@ -82,7 +82,7 @@ function getInstruccion() {
   for (let a of arboles) {
     if (!a || !a.vivo) continue;
     if (dist(x, y, a.x, a.y) < rangoArbol) {
-      return "Presioná R para regar el árbol}.";
+      return "Presioná R para regar el árbol.";
     }
   }
 
@@ -99,6 +99,13 @@ function getInstruccion() {
   // si ya se apagó el fuego y aún no ganó
   if (puedePlantar) {
       return "Presioná P para plantar un nuevo árbol.";
+  }
+
+  // si hay animal cerca
+  if (animalActivo && animal && !animal.curado) {
+    if (dist(x, y, animal.x, animal.y) < 80) {
+      return "¡Un coatí lastimado! Presioná A para ayudarlo.";
+    }
   }
   
   return "";
