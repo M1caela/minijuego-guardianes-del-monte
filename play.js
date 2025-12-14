@@ -11,7 +11,8 @@ let fondoInicio;
 let fondoGanar;
 let fondoPerder;
 let topadoraImg; 
-let imgBrote, imgArbolMedio, imgArbolGrande;
+let imgBrote, imgArbolMedio, imgArbolGrande; 
+let estrellaGif;
 let fuegoImg;
 
 // fondo / mapa
@@ -60,6 +61,8 @@ let avatarElegido = false;
 // partidas
 let idPartida = null;
 
+let animacionesActivas = [];
+
 
 
 ///////////////////////////   IMAGENES Y SONIDO  ///////////////////////////
@@ -91,7 +94,10 @@ function preload() {
   fondoInicio = loadImage("img/fondo-inicio.jpg")
   fondoGanar = loadImage("img/fondo-ganar.jpg");
   fondoPerder = loadImage("img/fondo-perder.jpg");
-  
+
+  // gif animacion logro
+  estrellaGif = loadImage("img/logro-completado.gif");
+
   /// SONIDOS ///
   cancionAmbiente = loadSound("sonido/ambiente.mp3");
   cancionGanar = loadSound("sonido/ganar.mp3");
@@ -166,6 +172,8 @@ function draw() {
     pantallaCreditos();
   }
   
+  dibujarAnimacionesLogros(); // al completar logro de la tabla 
+
 }
 
 
@@ -442,6 +450,7 @@ function crearPartida() {
   });
 }
 
+// TABLA DE LOGROS //
 function dibujarTablaLogros() {
   push();
 
@@ -510,7 +519,9 @@ function dibujarTablaLogros() {
   pop();
 }
 
+// conexion con mysql - actualizar logros
 function enviarAccionAlServidor(tipo) {
+  if (!partidaId) return; // protección
   fetch("actualizarTareas.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -522,17 +533,71 @@ function enviarAccionAlServidor(tipo) {
 }
 
 function actualizarLogros() {
-  logros.topadoras.completado = topadorasLocales >= REQ.topadoras;
-  logros.incendios.completado = fuegosLocales >= REQ.fuegos_apagados;
-  logros.riegos.completado = riegosLocales >= REQ.riegos;
-  logros.plantar.completado = arbolesLocales >= REQ.arboles_plantados;
-  logros.animal.completado = animalesLocales >= REQ.animales_ayudados;
+  if (!logros.topadoras.completado && topadorasLocales >= REQ.topadoras) {
+    logros.topadoras.completado = true;
+    dispararAnimacionLogro("topadoras");
+  }
+
+  if (!logros.incendios.completado && fuegosLocales >= REQ.fuegos_apagados) {
+    logros.incendios.completado = true;
+    dispararAnimacionLogro("fuegos");
+  }
+
+  if (!logros.riegos.completado && riegosLocales >= REQ.riegos) {
+    logros.riegos.completado = true;
+    dispararAnimacionLogro("riegos");
+  }
+
+  if (!logros.plantar.completado && arbolesLocales >= REQ.arboles_plantados) {
+    logros.plantar.completado = true;
+    dispararAnimacionLogro("plantar");
+  }
+
+  if (!logros.animal.completado && animalesLocales >= REQ.animales_ayudados) {
+    logros.animal.completado = true;
+    dispararAnimacionLogro("animal");
+  }
+
+  if (todosLosLogrosCompletados()) {
+    finalizarPartida();
+    gameState = "ganar";
+  }
+
 }
 
 function todosLosLogrosCompletados() {
   return Object.values(logros).every(l => l.completado);
-  finalizarPartida();
 }
+
+
+function dispararAnimacionLogro(tipo) {
+  animacionesActivas.push({
+    tipo: tipo,
+    inicio: millis()
+  });
+}
+
+function dibujarAnimacionesLogros() {
+  for (let i = animacionesActivas.length - 1; i >= 0; i--) {
+    let a = animacionesActivas[i];
+    let t = millis() - a.inicio;
+
+    if (t > 2000) {
+      animacionesActivas.splice(i, 1);
+      continue;
+    }
+
+    push();
+    imageMode(CENTER);
+
+    let alpha = map(t, 0, 2000, 255, 0);
+    tint(255, alpha);
+
+    image(estrellaGif, width / 2, height / 2, 120, 120);
+    pop();
+  }
+}
+
 
 // al terminar juego
 function finalizarPartida() {

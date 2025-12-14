@@ -1,6 +1,13 @@
 // logros.js
 
-const LOGROS_DEF = {
+let mostrarAnimacionLogro = false;
+let inicioAnimacionLogro = 0;
+let DURACION_ANIMACION = 6000; // 6 segundos
+let logroActual = null; // qué logro disparó la animación
+
+
+
+const logros = {
   topadoras: "Eliminar todas las topadoras",
   incendios: "Apagar todos los incendios",
   riegos: "Regar árboles",

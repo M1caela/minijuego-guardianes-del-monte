@@ -128,6 +128,8 @@ function pantallaJuego() {
   actualizarRecarga();
 
   dibujarTablaLogros();
+  actualizarLogros();
+
  
 }
 
