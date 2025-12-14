@@ -61,9 +61,12 @@ let avatarElegido = false;
 // partidas
 let idPartida = null;
 
+// animacion logros
+let mostrarAnimacionLogro = false;
+let inicioAnimacionLogro = 0;
+let logroActual = null
+
 let animacionesActivas = [];
-
-
 
 ///////////////////////////   IMAGENES Y SONIDO  ///////////////////////////
 function preload() {
@@ -139,6 +142,11 @@ function setup() {
   botonSiguiente.hide();
   botonSiguiente.mousePressed(irAJuego);
 
+  //  debug
+  console.log("Datos del GIF:", estrellaGif);
+  console.log("Ancho:", estrellaGif.width);
+  console.log("Alto:", estrellaGif.height);
+
 }
 
 
@@ -172,9 +180,24 @@ function draw() {
     pantallaCreditos();
   }
   
-  dibujarAnimacionesLogros(); // al completar logro de la tabla 
+//  gestionarAnimacionLogro();
+  if (mostrarAnimacionLogro) {
+  let t = millis() - inicioAnimacionLogro;
+
+  if (t < 6000) {
+    dibujarAnimacionLogro();
+  } else {
+    mostrarAnimacionLogro = false;
+    logroActual = null;
+  }
+}
+
+//debug 
+console.log("Animación activa", mostrarAnimacionLogro);
 
 }
+
+
 
 
 /////////////////////////   FUNCIONES DE USUARIO   ///////////////////////////
@@ -532,35 +555,68 @@ function enviarAccionAlServidor(tipo) {
   });
 }
 
+// TABLA DE LOGROS //
+
 function actualizarLogros() {
-  if (!logros.topadoras.completado && topadorasLocales >= REQ.topadoras) {
-    logros.topadoras.completado = true;
-    dispararAnimacionLogro("topadoras");
+
+  // TOPADORAS
+  if (
+    topadorasLocales >= REQ.topadoras &&
+    !logrosCompletados.topadoras
+  ) {
+    logrosCompletados.topadoras = true;
+
+    mostrarAnimacionLogro = true;
+    inicioAnimacionLogro = millis();
+    logroActual = "topadoras";
   }
 
-  if (!logros.incendios.completado && fuegosLocales >= REQ.fuegos_apagados) {
-    logros.incendios.completado = true;
-    dispararAnimacionLogro("fuegos");
+  // INCENDIOS
+  if (
+    fuegosLocales >= REQ.fuegos_apagados &&
+    !logrosCompletados.incendios
+  ) {
+    logrosCompletados.incendios = true;
+
+  mostrarAnimacionLogro = true;
+  inicioAnimacionLogro = millis();
+  logroActual = "incendios";
   }
 
-  if (!logros.riegos.completado && riegosLocales >= REQ.riegos) {
-    logros.riegos.completado = true;
-    dispararAnimacionLogro("riegos");
+  // RIEGOS
+  if (
+    riegosLocales >= REQ.riegos &&
+    !logrosCompletados.riegos
+  ) {
+    logrosCompletados.riegos = true;
+
+    mostrarAnimacionLogro = true;
+    inicioAnimacionLogro = millis();
+    logroActual = "riegos";
   }
 
-  if (!logros.plantar.completado && arbolesLocales >= REQ.arboles_plantados) {
-    logros.plantar.completado = true;
-    dispararAnimacionLogro("plantar");
+  // PLANTAR
+  if (
+    arbolesLocales >= REQ.arboles_plantados &&
+    !logrosCompletados.plantar
+  ) {
+    logrosCompletados.plantar = true;
+
+    mostrarAnimacionLogro = true;
+    inicioAnimacionLogro = millis();
+    logroActual = "plantar";
   }
 
-  if (!logros.animal.completado && animalesLocales >= REQ.animales_ayudados) {
-    logros.animal.completado = true;
-    dispararAnimacionLogro("animal");
-  }
+  // ANIMAL
+  if (
+    animalesLocales >= REQ.animales_ayudados &&
+    !logrosCompletados.animal
+  ) {
+    logrosCompletados.animal = true;
 
-  if (todosLosLogrosCompletados()) {
-    finalizarPartida();
-    gameState = "ganar";
+    mostrarAnimacionLogro = true;
+    iniciAnimacionLogro = millis();
+    logroActual = "animal";
   }
 
 }
@@ -569,37 +625,60 @@ function todosLosLogrosCompletados() {
   return Object.values(logros).every(l => l.completado);
 }
 
+// ANIMACION AL CONSEGUIR LOGRO //
 
 function dispararAnimacionLogro(tipo) {
-  animacionesActivas.push({
-    tipo: tipo,
-    inicio: millis()
-  });
+  logroActual = tipo;
+  mostrarAnimacionLogro = true;
+  inicioAnimacionLogro = millis();
 }
 
-function dibujarAnimacionesLogros() {
-  for (let i = animacionesActivas.length - 1; i >= 0; i--) {
-    let a = animacionesActivas[i];
-    let t = millis() - a.inicio;
+function gestionarAnimacionLogro() {
+  if (!mostrarAnimacionLogro) return;
 
-    if (t > 2000) {
-      animacionesActivas.splice(i, 1);
-      continue;
-    }
+  // Calcular cuánto tiempo pasó
+  let tiempoPasado = millis() - inicioAnimacionLogro;
 
+  // Si pasó menos de x segundos dibujar
+  if (tiempoPasado < 5000) {
     push();
     imageMode(CENTER);
+    noTint();
 
-    let alpha = map(t, 0, 2000, 255, 0);
-    tint(255, alpha);
-
-    image(estrellaGif, width / 2, height / 2, 120, 120);
+    image(estrellaGif, 400,300, 350, 350); 
+    
     pop();
+  } 
+  else {
+    // Si pasó el tiempo apagr la animación
+    mostrarAnimacionLogro = false;
+    logroActual = null;
   }
 }
 
+function dibujarAnimacionLogro() {
+  push();
+  imageMode(CENTER);
 
-// al terminar juego
+  // prueba visual obligatoria
+  fill(255, 0, 0);
+  rect(width / 2 - 150, height / 2 - 50, 300, 100);
+
+  // texto
+  fill(255);
+  textAlign(CENTER, CENTER);
+  textSize(24);
+  text("LOGRO COMPLETADO", width / 2, height / 2);
+
+  // si esto se ve, la animación funciona
+  // luego reemplazás por gif/video
+
+  pop();
+}
+
+
+// TERMINAR JUEGO //
+
 function finalizarPartida() {
   fetch("finalizarPartida.php", {
     method: "POST",

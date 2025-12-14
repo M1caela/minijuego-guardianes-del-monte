@@ -18,7 +18,7 @@ let minThrowDistance = 10;
 let camXGlobal = 0, camYGlobal = 0;
 let aimWorldX = 0, aimWorldY = 0;
 
-let maxMunicion = 10;        // cantidad total de tiros
+let maxMunicion = 12;        // cantidad total de tiros
 let municionActual = 10;     // empieza lleno
 let recargando = false;      // para saber si está recargando
 let tiempoRecarga = 6000;    // 6 segundos 
