@@ -86,6 +86,13 @@ function getInstruccion() {
     }
   }
 
+  // Prioridad: si hay animal cerca, mostrar mensaje de ayuda
+  if (animalActivo && !animal.curado) {
+    if (dist(x, y, animal.x, animal.y) < 90) {
+      return "¡Un coatí lastimado! Presioná A para ayudarlo.";
+    }
+  }
+
   // si hay topadoras activas en el mapa
   if (topadoras && topadoras.some(t => t.active && !t.dead)) {
     return "Apuntá y hacé clic para disparar y detener a las topadoras.";
@@ -101,13 +108,6 @@ function getInstruccion() {
       return "Presioná P para plantar un nuevo árbol.";
   }
 
-  // si hay animal cerca
-  if (animalActivo && animal && !animal.curado) {
-    if (dist(x, y, animal.x, animal.y) < 80) {
-      return "¡Un coatí lastimado! Presioná A para ayudarlo.";
-    }
-  }
-  
   return "";
 }
 

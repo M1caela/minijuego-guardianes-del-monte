@@ -353,7 +353,13 @@ function actualizarFuegos() {
     if (fuegos.every(f => !f.activo)) {
       fuegoActivo = false;
       fuegoDerrotado = true;
-      console.log("Modo plantar activado.");
+
+      //  activar animal para ayudar una vez que se apagaron fuegos
+      if (!animalActivo && !animalAyudado) {
+        crearAnimal();
+        console.log("Se creó nuevo animal en mapa.");
+         
+      } 
     }
  }
 
@@ -487,21 +493,11 @@ function regarArboles() {
 function verificarModoPlantar() {
   if (puedePlantar && nuevosPlantados < maxNuevosArboles) return;
 
-  // si todos los fuegos estan apagados y arboles iniciales existen
-  let sinFuego = !fuegos || fuegos.every(f => !f.activo);
-  let iniciales = arboles.filter(a => a.isInitial);
-  let inicialesOk = iniciales.length > 0 && iniciales.every(a => !a.vivo || a.etapa === 3);
-
-  if (sinFuego && inicialesOk && nuevosPlantados < maxNuevosArboles) {
+  // si el fuego fue derrotado, habilitar modo plantar
+  if (fuegoDerrotado && nuevosPlantados < maxNuevosArboles) {
+    console.log("Modo plantar activado.");
     puedePlantar = true;
     console.log("Árboles plantados:", nuevosPlantados);
-
-    //  activar animal para ayudar una vez que se apagaron fuegos
-    if (!animalActivo && !animalAyudado) {
-      crearAnimal();
-      console.log("Se creó nuevo animal en mapa.");
-    }
-
   }
 }
 
@@ -523,8 +519,8 @@ function plantarNuevoArbol() {
   cambiarSaludMonte(+5);
   
   // contabilizar local y enviar al servidor
-  animalesLocales++;
-  enviarAccionAlServidor("animal");
+  arbolesLocales++;
+  enviarAccionAlServidor("plantar");
 
 
   console.log("Planteado nuevo árbol. total nuevos:", nuevosPlantados);
@@ -543,11 +539,12 @@ let animalAyudado = false; // logro
 
 function crearAnimal() {
   animal = {
-    x: 250,
-    y: 430,
+    x: 770,
+    y: 210,
     curado: false
   };
   animalActivo = true;
+  console.log("Animal creado en el mapa.");
 }
 
 function dibujarAnimal() {
@@ -556,9 +553,9 @@ function dibujarAnimal() {
   push();
   imageMode(CENTER);
   if (animal.curado) {
-    image(coatiCurado, animal.x, animal.y, 100, 100);
+    image(coatiCurado, animal.x, animal.y, 170, 170);
   } else {
-    image(coatiLastimado, animal.x, animal.y, 100, 100);
+    image(coatiLastimado, animal.x, animal.y, 170, 170);
   }
   pop();
 }
@@ -570,7 +567,6 @@ function intentarAyudarAnimal() {
   if (d < 80) {
     animal.curado = true;
     animalAyudado = true;
-    animalActivo = false;
 
     animalesLocales++; // contador de logros
     enviarAccionAlServidor("animal", 1);
@@ -578,5 +574,3 @@ function intentarAyudarAnimal() {
     console.log("Animal ayudado");
   }
 }
-
-

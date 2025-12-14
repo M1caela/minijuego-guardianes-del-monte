@@ -162,7 +162,6 @@ function draw() {
 
   // logica de estados //
   if (gameState === "inicio") {
-    //pantallaJuego(); // solo para producir tabla de logros, dsp descomentar el de abajo
      pantallaInicio();
   } 
   else if (gameState === "elegirJugador") {
@@ -685,6 +684,17 @@ function gestionarAnimacionLogro() {
     // Si pasó el tiempo apagr la animación
     mostrarAnimacionLogro = false;
     logroActual = null;
+  }
+}
+
+// RECARGA DE MUNICIÓN //
+function actualizarRecarga() {
+  if (recargando) {
+    if (millis() - tiempoInicioRecarga >= tiempoRecarga) {
+      // Recarga completa
+      municionActual = maxMunicion;
+      recargando = false;
+    }
   }
 }
 

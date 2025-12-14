@@ -91,7 +91,7 @@ function pantallaJuego() {
     dibujarFuegos();       
     dibujarProyectiles(); 
     verificarModoPlantar();
-
+    
     // animal una vez que no hay fuego
     dibujarAnimal();
 
@@ -140,16 +140,6 @@ function pantallaJuego() {
   actualizarTemporizador();
   dibujarTemporizador();
  
-}
-
-function actualizarRecarga() {
-  if (recargando) {
-    if (millis() - tiempoInicioRecarga >= tiempoRecarga) {
-      // Recarga completa
-      municionActual = maxMunicion;
-      recargando = false;
-    }
-  }
 }
 
 function pantallaGanar() {
