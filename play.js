@@ -61,12 +61,13 @@ let avatarElegido = false;
 // partidas
 let idPartida = null;
 
-// animacion logros
-let mostrarAnimacionLogro = false;
-let inicioAnimacionLogro = 0;
-let logroActual = null
+// temporizador de partida
+let inicioPartida = 0;
+let tiempoMaximo = 10 * 60 * 1000; // 10 minutos en ms
+let tiempoRestante = tiempoMaximo;
 
-let animacionesActivas = [];
+
+
 
 ///////////////////////////   IMAGENES Y SONIDO  ///////////////////////////
 function preload() {
@@ -172,7 +173,10 @@ function draw() {
   else if (gameState === "perder") {
     checkGameStateSounds();
     pantallaPerder();
-  } 
+  }
+   else if (gameState === "perderTiempo") {
+    pantallaPerderTiempo();
+  }
    else if (gameState === "informacion") {
     pantallaInformacion();
   } 
@@ -180,23 +184,9 @@ function draw() {
     pantallaCreditos();
   }
   
-//  gestionarAnimacionLogro();
-  if (mostrarAnimacionLogro) {
-  let t = millis() - inicioAnimacionLogro;
-
-  if (t < 6000) {
-    dibujarAnimacionLogro();
-  } else {
-    mostrarAnimacionLogro = false;
-    logroActual = null;
-  }
+  gestionarAnimacionLogro();
+ 
 }
-
-//debug 
-console.log("Animación activa", mostrarAnimacionLogro);
-
-}
-
 
 
 
@@ -454,7 +444,11 @@ function irAJuego() {
 
   // inicializar partida y elementos
   crearPartida();
+  inicioPartida = millis();   // arranca el timer
+  tiempoRestante = tiempoMaximo;
+
   gameState = "juego";
+
   initArboles();
   initTopadoras();
   initMonte();
@@ -472,6 +466,34 @@ function crearPartida() {
     console.log("Partida creada:", partidaId);
   });
 }
+
+// TEMPORIZADOR DEL JUEGO //
+function actualizarTemporizador() {
+  let ahora = millis();
+  tiempoRestante = tiempoMaximo - (ahora - inicioPartida);
+
+  if (tiempoRestante <= 0) {
+    tiempoRestante = 0;
+    gameState = "perderTiempo";
+  }
+}
+
+function dibujarTemporizador() {
+  let segundos = floor(tiempoRestante / 1000);
+  let minutos = floor(segundos / 60);
+  segundos = segundos % 60;
+
+  let textoTiempo =
+    nf(minutos, 2) + ":" + nf(segundos, 2);
+
+  push();
+  fill(255);
+  textSize(16);
+  textAlign(RIGHT, TOP);
+  text(textoTiempo, width - 20, 20);
+  pop();
+}
+
 
 // TABLA DE LOGROS //
 function dibujarTablaLogros() {
@@ -645,7 +667,7 @@ function gestionarAnimacionLogro() {
     imageMode(CENTER);
     noTint();
 
-    image(estrellaGif, 400,300, 350, 350); 
+    image(topadoraImg, 400,300, 350, 350); 
     
     pop();
   } 
@@ -656,28 +678,7 @@ function gestionarAnimacionLogro() {
   }
 }
 
-function dibujarAnimacionLogro() {
-  push();
-  imageMode(CENTER);
-
-  // prueba visual obligatoria
-  fill(255, 0, 0);
-  rect(width / 2 - 150, height / 2 - 50, 300, 100);
-
-  // texto
-  fill(255);
-  textAlign(CENTER, CENTER);
-  textSize(24);
-  text("LOGRO COMPLETADO", width / 2, height / 2);
-
-  // si esto se ve, la animación funciona
-  // luego reemplazás por gif/video
-
-  pop();
-}
-
-
-// TERMINAR JUEGO //
+// FINALIZAR PARTIDA - enviar datos al servidor //
 
 function finalizarPartida() {
   fetch("finalizarPartida.php", {

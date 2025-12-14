@@ -108,11 +108,6 @@ function pantallaJuego() {
   } 
   pop();
   
-  // barra de vida
-  dibujarBarraMonte(); 
-  
-  dibujarMunicionHUD();
-
   // instrucciones (cambia segun modo)
   push();
     textAlign(CENTER, CENTER);
@@ -124,11 +119,19 @@ function pantallaJuego() {
       text(instruccion, width/2, 550);
     }
   pop();
-  
+
+    // barra de vida y tiros restantes
+  dibujarBarraMonte(); 
+  dibujarMunicionHUD();
   actualizarRecarga();
 
+  // tablero de logros y tareas
   dibujarTablaLogros();
   actualizarLogros();
+
+  // contador de tiempo
+  actualizarTemporizador();
+  dibujarTemporizador();
 
  
 }
@@ -171,6 +174,24 @@ function pantallaPerder() {
     fill(255);
     textSize(40);
     text("El monte fue destruido.", width / 2, height / 2 - 50);
+
+    textSize(24);
+    text("Presioná ESPACIO", width / 2, height / 2 + 60);
+  pop();
+}
+
+function pantallaPerderTiempo() {
+  ocultarInput();
+  push();
+    imageMode(CORNER);
+    if (fondoPerder) image(fondoPerder, 0, 0, width, height);
+
+    textAlign(CENTER, CENTER);
+    fill(255);
+    textSize(40);
+    text("Se acabó el tiempo y el monte no fue restaurado.", width / 2, height / 2 - 50);
+    textSize(30);
+    text("¡Seguí intentando!", width / 2, height / 2 - 30);
 
     textSize(24);
     text("Presioná ESPACIO", width / 2, height / 2 + 60);
