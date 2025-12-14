@@ -194,6 +194,9 @@ function draw() {
   else if (gameState === "creditos") {
     pantallaCreditos();
   }
+  else if (gameState === "ranking") {
+    pantallaRanking();
+  }
   
   gestionarAnimacionLogro();
  

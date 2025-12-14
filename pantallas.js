@@ -154,8 +154,6 @@ function pantallaGanar() {
     fill(255);
     textSize(40);
     text("¡El monte respira otra vez!", width / 2, height / 2 - 50);
-
-    botonVerRanking(); // mostrar botón ranking
     textSize(24);
     text("Presioná ESPACIO", width / 2, height / 2 + 60);
   pop();
@@ -171,8 +169,6 @@ function pantallaPerder() {
     fill(255);
     textSize(40);
     text("El monte fue destruido.", width / 2, height / 2 - 50);
-
-    botonVerRanking(); // mostrar botón ranking
     textSize(24);
     text("Presioná ESPACIO", width / 2, height / 2 + 60);
   pop();
@@ -190,8 +186,6 @@ function pantallaPerderTiempo() {
     text("Se acabó el tiempo\ny el monte no fue restaurado.", width / 2, height / 2 - 50);
     textSize(30);
     text("¡Seguí intentando!", width / 2, height / 2 - 30);
-
-    botonVerRanking(); // mostrar botón ranking
     textSize(24);
     text("Presioná ESPACIO", width / 2, height / 2 + 60);
   pop();
@@ -216,8 +210,12 @@ function pantallaCreditos() {
     text("Hecho en p5.js - 2025", width/2, 280);
   
     push();
+      botonVerRanking(); // mostrar botón ranking
+
+      
       textSize(22);
       text("Presioná I para volver al inicio.", width/2, 400);
+      
     pop();
   pop();
 }
