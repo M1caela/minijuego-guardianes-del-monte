@@ -146,6 +146,7 @@ function setup() {
   inputNombre = createInput();
   inputNombre.position(340, 515);
   inputNombre.attribute("placeholder", "Nombre");
+  inputNombre.attribute("maxlength", "12"); // Limitar longitud máxima
   inputNombre.size(150);
   inputNombre.parent(document.body);
   inputNombre.hide(); 
@@ -304,7 +305,7 @@ function keyPressed() {
 
   if (gameState === "ranking") {
     if (key === 'i' || key === 'I') {
-      gameState = "inicio";
+      resetGame();
       return;
     }
   }
@@ -510,8 +511,18 @@ function ocultarInput() {
 }
 
 function verificarCamposCompletos() {
+  // SEGURIDAD: Sanitizar entrada (solo letras, números y espacios)
+  let val = inputNombre.value();
+  let valLimpio = val.replace(/[^a-zA-Z0-9 ]/g, ''); 
+
+  // Si el usuario ingresó caracteres inválidos, limpiar el input inmediatamente
+  if (val !== valLimpio) {
+    inputNombre.value(valLimpio);
+  }
+
   // chequear si se eligió personaje y se completó nombre antes de mostrar boton de sig 
-  let nombreOk = inputNombre.value().trim() !== "";
+  let nombreOk = valLimpio.trim() !== "";
+  
   if (avatarElegido && nombreOk) {
     botonSiguiente.show(); 
   } else {
@@ -610,7 +621,6 @@ function dibujarTemporizador() {
   text(textoTiempo, tiempoX, tiempoY);
   pop();
 }
-
 
 // TABLA DE LOGROS //
 function dibujarTablaLogros() {
@@ -947,11 +957,9 @@ function finalizarPartida() {
 function controlarMusica() {
 
   toggleSonido = createCheckbox("🎵", false);
-  //toggleSonido.parent(document.body); 
-  toggleSonido.style("position", "absolute");
-  toggleSonido.style("top", "25px");
-  toggleSonido.style("right", "25px");
+  toggleSonido.position(30, 590); // Margen inferior izquierdo del canvas
   toggleSonido.style("accent-color", "white");
+  toggleSonido.style("color", "white"); // Texto blanco para que se vea sobre el fondo
   toggleSonido.changed(controlarSonido);
   
   if (cancionAmbiente) cancionAmbiente.setVolume(0.9);
@@ -1026,15 +1034,14 @@ function actualizarObjetosColision() {
   // 2. Topadoras activas
   for (let t of topadoras) {
     if (t.active && !t.dead) {
-      // Caja de colisión para la topadora (aprox 80x60)
-      // Agregamos referencia 'ref' para que la topadora no choque consigo misma
+      // Agregamos 'ref' para que la topadora no choque consigo misma
       objetos.push({ x: t.x - 40, y: t.y - 30, w: 80, h: 60, tipo: 'topadora', ref: t });
     }
   }
 
   // 3. Animal (si está en el mapa)
   if (animalActivo && animal) {
-    // Caja de colisión para el animal (aprox 80x80)
+    // Caja de colisión para el animal
     objetos.push({ x: animal.x - 40, y: animal.y - 40, w: 80, h: 80, tipo: 'animal' });
   }
 }
