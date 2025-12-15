@@ -2,8 +2,11 @@
 header("Content-Type: application/json");
 include "conexion.php";
 
+// Obtener orden (DESC por defecto)
+$orden = isset($_GET['orden']) && $_GET['orden'] === 'ASC' ? 'ASC' : 'DESC';
+
 // Consulta SQL: obtener los 5 mejores puntajes
-$sql = "SELECT id, nombre, puntaje_final FROM partidas WHERE puntaje_final > 0 ORDER BY puntaje_final DESC LIMIT 5";
+$sql = "SELECT id, nombre, puntaje_final, tiempo_partida FROM partidas WHERE puntaje_final > 0 ORDER BY puntaje_final $orden LIMIT 5";
 $result = $cn->query($sql);
 
 $datos = [];

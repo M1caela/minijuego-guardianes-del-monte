@@ -264,7 +264,7 @@ function pantallaRanking() {
     // Encabezados de tabla
     textSize(18);
     fill(150, 200, 150);
-    text("Pos", width / 2 - 150, 180);
+    text("Tiempo", width / 2 - 150, 180);
     text("Nombre", width / 2, 180);
     text("Puntaje", width / 2 + 150, 180);
 
@@ -285,12 +285,20 @@ function pantallaRanking() {
       let r = ranking[i];
       let y = startY + i * lineHeight;
       
-      text(i + 1, width / 2 - 150, y);
+      // Formatear tiempo (segundos a MM:SS)
+      let t = int(r.tiempo_partida);
+      let min = floor(t / 60);
+      let seg = t % 60;
+      let tiempoTexto = nf(min, 2) + ":" + nf(seg, 2);
+
+      text(tiempoTexto, width / 2 - 150, y);
       text(r.nombre, width / 2, y);
       text(r.puntaje_final, width / 2 + 150, y);
     }
     }
     
+    mostrarBotonOrdenar();
+
     push();
       textSize(18);
       fill(200);

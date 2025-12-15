@@ -58,6 +58,8 @@ let inputNombre;
 let nombreUsuario = "";
 let botonSiguiente;
 let botonRanking;
+let botonOrdenar;
+let ordenRanking = 'DESC'; // Por defecto mayor a menor
 let avatarElegido = false;
 
 // partidas
@@ -159,6 +161,14 @@ function setup() {
     cargarRanking();
     gameState = "ranking";
   });
+
+  // BOTÓN ORDENAR (Ranking)
+  botonOrdenar = createButton("Ordenar: Mayor Puntaje");
+  botonOrdenar.style("position", "absolute");
+  botonOrdenar.class("btn-siguiente"); 
+  botonOrdenar.style("font-size", "14px"); // Un poco más chico
+  botonOrdenar.hide();
+  botonOrdenar.mousePressed(toggleOrdenRanking);
 }
 
 
@@ -450,6 +460,7 @@ function ocultarInput() {
   inputNombre.hide();
   botonSiguiente.hide();
   if (botonRanking) botonRanking.hide();
+  if (botonOrdenar) botonOrdenar.hide();
 }
 
 function verificarCamposCompletos() {
@@ -494,7 +505,7 @@ function crearPartida() {
 
 // LEER JSON DESDE PHP //
 function cargarRanking() {
-  loadJSON('obtenerRanking.php', (data) => {
+  loadJSON('obtenerRanking.php?orden=' + ordenRanking, (data) => {
     ranking = data; // Guarda los datos en la variable global
     console.log("Ranking cargado:", ranking);
     
@@ -515,6 +526,24 @@ function botonVerRanking() {
     botonRanking.show();
     botonRanking.position(width / 2 - 60, height / 2 + 210);
   }
+}
+
+function mostrarBotonOrdenar() {
+  if (botonOrdenar) {
+    botonOrdenar.show();
+    botonOrdenar.position(width / 2 - 100, height / 2 + 160);
+  }
+}
+
+function toggleOrdenRanking() {
+  if (ordenRanking === 'DESC') {
+    ordenRanking = 'ASC';
+    botonOrdenar.html("Ordenar: Menor Puntaje");
+  } else {
+    ordenRanking = 'DESC';
+    botonOrdenar.html("Ordenar: Mayor Puntaje");
+  }
+  cargarRanking();
 }
 
 // TEMPORIZADOR DEL JUEGO //
