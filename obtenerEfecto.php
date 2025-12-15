@@ -5,8 +5,7 @@ include "conexion.php";
 // Recibimos el tipo de efecto (positivo o negativo)
 $tipo = isset($_GET['tipo']) ? $_GET['tipo'] : 'neutro';
 
-// Aquí simulamos obtener la configuración desde una tabla de la base de datos
-// Ej: $sql = "SELECT r, g, b, cantidad FROM efectos_visuales WHERE tipo = '$tipo'";
+// simula obtener la configuración desde una tabla de la base de datos
 
 $respuesta = [];
 

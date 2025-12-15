@@ -227,7 +227,7 @@ function pantallaInformacion() {
     fill('white'); 
     anchoMaxTxt = 660;
     let w = (100);
-    textSize(15); textWrap(WORD); textAlign(LEFT);
+    textSize(15); textWrap(WORD); textAlign(LEFT, TOP); textFont("roboto mono");
     text("El cuidado ambiental no es solo una responsabilidad colectiva: es una necesidad urgente. \n En Argentina, la deforestación industrial avanza a un ritmo alarmante, amenazando la biodiversidad y los ecosistemas que sostienen la vida. ", w, 70, anchoMaxTxt);
   
     text("Según datos del Min de Ambiente y Desarrollo, entre 1998 y 2023 el país perdió +8M de hectáreas de bosques nativos, principalmente en  provincias del norte. Las causas principales son la expansión agroganadera y la tala ilegal, en muchos casos para sembrar soja o criar ganado. \n A esto se suman los incendios forestales, cada vez más frecuentes. En 2023, el Servicio Nacional de Manejo del Fuego (SNMF) registró +1,3M de hectáreas afectadas por incendios en todo el país, impulsados por el cambio climático, las sequías prolongadas y las quemas intencionales.", w, 210, anchoMaxTxt);

@@ -867,6 +867,8 @@ function checkGameStateSounds() {
     // cambio de estado detectado
     if (gameState === "ganar" || gameState === "perder" || gameState === "perderTiempo") {
       finalizarPartida(); // Guardar datos al terminar
+      mostrarAnimacionLogro = false; // Detener animación de logro
+      particulasHUD = []; // Limpiar partículas visuales
     }
 
     if (gameState === "ganar") {
