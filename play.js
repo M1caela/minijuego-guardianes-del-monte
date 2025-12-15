@@ -11,7 +11,7 @@ let fondoInicio;
 let fondoGanar;
 let fondoPerder;
 let topadoraImg; 
-let imgBrote, imgArbolMedio, imgArbolGrande; 
+let imgBrote, imgArbolMedio, imgArbolGrande, imgEstrellita
 let estrellaLogros;
 let coatiLastimado, coatiCurado;
 let fuegoImg;
@@ -113,6 +113,7 @@ function preload() {
 
   // logro completado
   estrellaLogros = loadImage("img/logro-completado.png");
+  imgEstrellita = loadImage("img/estrellita.png");
 
   /// SONIDOS ///
   cancionAmbiente = loadSound("sonido/ambiente.mp3");
@@ -598,25 +599,55 @@ function dibujarTemporizador() {
 // TABLA DE LOGROS //
 function dibujarTablaLogros() {
   push();
-
+  // dimensiones y posición
   let tablaW = 240;
   let tablaH = 170;
+  let headerH = 34;
+  let margen = 2;
+
   let tablaX = width - tablaW - 20;
   let tablaY = 20;
 
-  // fondo
-  fill(60);
-  rect(tablaX, tablaY, tablaW, tablaH, 8);
+  let colorHeader = color(70); // franja superior
+  let colorCuerpo = color(40, 40, 40, 170); // Cuerpo semi-transparente
+
+  noStroke();
+  fill(colorHeader);
+  rect(tablaX, tablaY, tablaW, headerH, 10, 10, 0, 0);
+
+  fill(colorCuerpo);
+  rect(
+    tablaX,
+    tablaY + headerH,
+    tablaW,
+    tablaH - headerH,
+    0, 0, 10, 10 // Redondeado solo abajo
+  );
 
   // título
   fill(255);
   textSize(16);
-  textAlign(LEFT, TOP);
-  text("Logros", tablaX + 10, tablaY + 8);
-  
-  textSize(13);
-  let y = tablaY + 36;
+  textAlign(LEFT, CENTER);
+  text("Logros", tablaX + 12, tablaY + headerH / 2);
 
+  // ===== ESTRELLA DECORATIVA =====
+  if (imgEstrellita) {
+    image(
+      imgEstrellita,
+      tablaX + tablaW - 45, // Ajustado a la derecha (esquina superior)
+      tablaY - 3,           // Centrado verticalmente en el header
+      40,
+      40
+    );
+  }
+
+  // ===== LISTA DE LOGROS =====
+  fill(255);
+  textSize(13);
+  textAlign(LEFT, TOP);
+
+  let y = tablaY + headerH + 10;
+  let x = tablaX + 12;
   // 1. Topadoras
   let okTop = topadorasLocales >= REQ.topadoras;
   text(
@@ -945,8 +976,8 @@ function actualizarObjetosColision() {
   // 1. Árboles grandes (Etapa 3)
   for (let a of arboles) {
     if (a.vivo && a.etapa === 3) {
-      // Caja de colisión centrada en la base del árbol (aprox 60x60)
-      objetos.push({ x: a.x - 30, y: a.y - 30, w: 60, h: 60, tipo: 'arbol' });
+      // Caja de colisión MUY pequeña (tronco) para permitir que la topadora se acerque y lo tale
+      objetos.push({ x: a.x - 5, y: a.y - 5, w: 10, h: 10, tipo: 'arbol' });
     }
   }
 

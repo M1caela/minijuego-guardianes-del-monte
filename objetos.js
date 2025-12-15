@@ -622,7 +622,7 @@ function intentarAyudarAnimal() {
   if (!animalActivo || !animal || animal.curado) return;
 
   let d = dist(x, y, animal.x, animal.y);
-  if (d < 80) {
+  if (d < 100) {
     animal.curado = true;
     animalAyudado = true;
 

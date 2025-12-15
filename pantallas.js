@@ -196,7 +196,7 @@ function pantallaPerderTiempo() {
     textSize(22);
     text("El monte no fue restaurado, seguí intentando...", width / 2, height / 2);
     textSize(24);
-    text("▸ Presioná ESPACIO ◂", width / 2, height / 2 + 60);
+    text("▸ Presioná ESPACIO ◂", width / 2, height / 2 + 90);
   pop();
 }
 
