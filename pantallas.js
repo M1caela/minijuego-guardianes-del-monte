@@ -17,8 +17,8 @@ function pantallaInicio() {
 
     push();
       textSize(24);
-      text("La naturaleza te necesita.", width/2, 240);
-      text("Protegé el bosque y sus animales.", width/2, 270);
+      text("La naturaleza te necesita.", width/2, 245);
+      text("Protegé el bosque y sus animales.", width/2, 280);
     pop();
 
     push();
@@ -26,13 +26,13 @@ function pantallaInicio() {
       
       if (botonComenzar) {
         botonComenzar.show();
-        botonComenzar.position(width / 2 - 80, 380); // Centrado aproximado
+        botonComenzar.position(width / 2 - 80, 420); 
         // Efecto de latido
         let escala = 1 + sin(frameCount * 0.1) * 0.05;
         botonComenzar.style("transform", `scale(${escala})`);
       }
 
-      text("Presioná C para ver los créditos", width/2, 440);
+      text("Presioná C para ver los créditos", width/2, 500);
     pop();
   pop();
 }

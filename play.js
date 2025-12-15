@@ -446,8 +446,14 @@ function resetGame() {
   maxNuevosArboles = 4;
 
   // reiniciar cámara / jugador a posición inicial
-  x = 200; y = 480; dir = "default";
+  x = 800; y = 300; dir = "default";
   camXGlobal = 0; camYGlobal = 0;
+
+  // Restaurar configuración de dibujo por defecto
+  textAlign(CENTER, CENTER);
+  imageMode(CORNER);
+  rectMode(CORNER);
+  noTint();
 
   // reinicializaciones que tienen lógica propia
   if (typeof initMonte === 'function') initMonte();  // reinicia monte/variedades
@@ -459,6 +465,14 @@ function resetGame() {
   // indicadores
   fuegoActivo = false;
   puedePlantar = false;
+
+  // reiniciar contadores de logros
+  riegosLocales = 0;
+  fuegosLocales = 0;
+  arbolesLocales = 0;
+  animalesLocales = 0;
+  topadorasLocales = 0;
+
   console.log("Juego reiniciado -> estado:", gameState);
 }
 
@@ -519,20 +533,12 @@ function crearPartida() {
 }
 
 // LEER JSON DESDE PHP //
-function cargarRanking() {
+function cargarRanking() { 
+  // llamar para q la variable ranking se llene con la lista de jugadores traida desde la bdd
   loadJSON('obtenerRanking.php?orden=' + ordenRanking, (data) => {
     ranking = data; // Guarda los datos en la variable global
     console.log("Ranking cargado:", ranking);
-    
-    // Ejemplo: Si quisieras crear objetos visuales basados en estos datos:
-    // for (let r of ranking) { ... crearObjeto(r.nombre, r.puntaje_final) ... }
-
-    /*
-      llamar para q la variable ranking se llene con la lista de jugadores traída desde la base de datos.[
-      { "id": 1, "nombre": "Martín", "puntaje_final": 100 },
-      { "id": 5, "nombre": "Ana", "puntaje_final": 95 }
-    */
-
+    // Ejemplo para crear objetos visuales basados en estos datos: for (let r of ranking) { ... crearObjeto(r.nombre, r.puntaje_final) ... } 
   });
 }
 
