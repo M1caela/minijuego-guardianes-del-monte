@@ -76,8 +76,13 @@ class Topadora {
       let dx = target.x - this.x;
       let dy = target.y - this.y;
       let mag = sqrt(dx*dx + dy*dy) + 0.0001;
-      this.x += (dx / mag) * this.speed;
-      this.y += (dy / mag) * this.speed;
+      
+      let vx = (dx / mag) * this.speed;
+      let vy = (dy / mag) * this.speed;
+
+      // Movimiento independiente en ejes (permite deslizarse)
+      if (posicionValida(this.x + vx, this.y)) this.x += vx;
+      if (posicionValida(this.x, this.y + vy)) this.y += vy;
 
       // si llegó al árbol > talar
       if (dist(this.x, this.y, target.x, target.y) < 40) {
@@ -94,8 +99,13 @@ class Topadora {
         let dx = x - this.x;
         let dy = (height/2 + camYGlobal) - this.y;
         let mag = sqrt(dx*dx + dy*dy) + 0.0001;
-        this.x += (dx / mag) * (this.speed * 0.4);
-        this.y += sin(frameCount * 0.02 + this.x*0.001) * 0.5;
+        
+        let vx = (dx / mag) * (this.speed * 0.4);
+        let vy = sin(frameCount * 0.02 + this.x*0.001) * 0.5;
+
+        // Movimiento independiente
+        if (posicionValida(this.x + vx, this.y)) this.x += vx;
+        if (posicionValida(this.x, this.y + vy)) this.y += vy;
       }
     }
 
@@ -177,8 +187,15 @@ function initTopadoras() {
   topadoras = [];
   let n = floor(random(2, 4)); 
   for (let i = 0; i < n; i++) {
-    let tx = mapaAncho - random(40, 250);
-    let ty = random(150, mapaAlto - 150);
+    // Buscar posición válida para no spawnear dentro de objetos
+    let tx, ty;
+    let intentos = 0;
+    do {
+      tx = mapaAncho - random(40, 250);
+      ty = random(150, mapaAlto - 150);
+      intentos++;
+    } while (!posicionValida(tx, ty) && intentos < 50);
+
     topadoras.push(new Topadora(tx, ty, 3));
   }
   // contamos cuántas generamos 
@@ -197,8 +214,14 @@ function spawnTopadora() {
   if (activas >= 3) return;
 
   // crear nueva topadora y contabilizarla 
-  let tx = mapaAncho - random(40, 250);
-  let ty = random(150, mapaAlto - 150);
+  let tx, ty;
+  let intentos = 0;
+  do {
+    tx = mapaAncho - random(40, 250);
+    ty = random(150, mapaAlto - 150);
+    intentos++;
+  } while (!posicionValida(tx, ty) && intentos < 50);
+
   topadoras.push(new Topadora(tx, ty, 3));
   totalTopadorasSpawned++;
   console.log("Topadoras spawmeadas:", totalTopadorasSpawned);
@@ -594,4 +617,16 @@ function intentarAyudarAnimal() {
 
     console.log("Animal ayudado");
   }
+}
+
+// Función auxiliar para verificar colisiones con el entorno
+function posicionValida(x, y) {
+  let radio = 35; 
+  for (let o of objetos) {
+    if (x > o.x - radio && x < o.x + o.w + radio &&
+        y > o.y - radio && y < o.y + o.h + radio) {
+      return false; // Hay colisión
+    }
+  }
+  return true; // Libre
 }
