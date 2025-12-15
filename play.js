@@ -69,6 +69,9 @@ let inicioPartida = 0;
 let tiempoMaximo = 5 * 60 * 1000; // 5 minutos en ms
 let tiempoRestante = tiempoMaximo;
 
+// sistema de particulas HUD
+let particulasHUD = [];
+
 
 ///////////////////////////   IMAGENES Y SONIDO  ///////////////////////////
 function preload() {
@@ -196,6 +199,7 @@ function draw() {
   }
   
   gestionarAnimacionLogro();
+  dibujarParticulasHUD(); // Dibujar efectos sobre todo lo demás
  
 }
 
@@ -737,6 +741,59 @@ function gestionarAnimacionLogro() {
     // Si pasó el tiempo apagr la animación
     mostrarAnimacionLogro = false;
     logroActual = null;
+  }
+}
+
+// SISTEMA DE PARTÍCULAS HUD (Pixel Art) //
+
+class ParticulaHUD {
+  constructor(x, y, r, g, b, speed) {
+    this.x = x;
+    this.y = y;
+    this.vx = random(-speed, speed);
+    this.vy = random(-speed, speed);
+    this.alpha = 255;
+    this.color = color(r, g, b);
+    this.size = 12; // 12x12 px pixel art
+  }
+
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.alpha -= 5; // Desvanecer
+  }
+
+  draw() {
+    noStroke();
+    fill(red(this.color), green(this.color), blue(this.color), this.alpha);
+    rect(this.x, this.y, this.size, this.size); // Cuadrado pixel art
+  }
+}
+
+// Función llamada al recibir el JSON desde PHP
+function spawnParticulasHUD(data) {
+  // Parsear datos del JSON
+  let r = data.r;
+  let g = data.g;
+  let b = data.b;
+  let cantidad = data.cantidad;
+  let velocidad = data.velocidad;
+
+  // Crear objetos
+  for (let i = 0; i < cantidad; i++) {
+    // Spawnear cerca de la barra de vida (aprox 140, 30)
+    particulasHUD.push(new ParticulaHUD(140, 30, r, g, b, velocidad));
+  }
+}
+
+function dibujarParticulasHUD() {
+  for (let i = particulasHUD.length - 1; i >= 0; i--) {
+    let p = particulasHUD[i];
+    p.update();
+    p.draw();
+    if (p.alpha <= 0) {
+      particulasHUD.splice(i, 1);
+    }
   }
 }
 

@@ -20,6 +20,18 @@ function cambiarSaludMonte(delta) {
   if (monteHealth > monteMaxHealth) monteHealth = monteMaxHealth;
   if (monteHealth < 0) monteHealth = 0;
   chequearEstadoMonte(); 
+
+  // CONEXIÓN CON PHP PARA EFECTOS VISUALES
+  // Si hubo un cambio, pedimos la configuración del efecto al servidor
+  if (delta !== 0) {
+    let tipo = delta > 0 ? "positivo" : "negativo";
+    fetch("obtenerEfecto.php?tipo=" + tipo)
+      .then(response => response.json())
+      .then(data => {
+        spawnParticulasHUD(data); // Función en play.js que parsea el JSON
+      })
+      .catch(err => console.error("Error cargando efecto:", err));
+  }
 }
 
 // Dibujar la barra de salud del monte
