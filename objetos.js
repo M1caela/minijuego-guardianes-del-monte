@@ -540,7 +540,12 @@ let animalAyudado = false; // logro
 function crearAnimal() {
   animal = {
     x: 770,
-    y: 210,
+    y: -200, // Empieza arriba afuera de la pantalla y se mueve hacia abajo
+    targetX: 770,
+    targetY: 210,
+    startY: -200,
+    startTime: millis(),
+    duration: 5000, // Duración de 5 segundos
     curado: false
   };
   animalActivo = true;
@@ -549,6 +554,22 @@ function crearAnimal() {
 
 function dibujarAnimal() {
   if (!animalActivo || !animal) return;
+
+  // Animación de entrada: Traslación + Zig-Zag
+  let tiempo = millis() - animal.startTime;
+  if (tiempo < animal.duration) {
+    let t = tiempo / animal.duration; 
+    
+    // Movimiento hacia abaj
+    animal.y = lerp(animal.startY, animal.targetY, t);
+    
+    // Movimiento oscilatorio 
+    animal.x = animal.targetX + sin(t * TWO_PI * 3) * 40; 
+  } else {
+    //posición final
+    animal.x = animal.targetX;
+    animal.y = animal.targetY;
+  }
 
   push();
   imageMode(CENTER);
