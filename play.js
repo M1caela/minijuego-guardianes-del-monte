@@ -68,14 +68,17 @@ let avatarElegido = false;
 let idPartida = null;
 let ranking = []; // guardar los datos JSON
 
-// temporizador de partida
+// temporizador/contador de partida
 let inicioPartida = 0;
 let tiempoMaximo = 5 * 60 * 1000; // 5 minutos en ms
 let tiempoRestante = tiempoMaximo;
 
-// sistema de particulas HUD
+// sistema de particulas HUD de vida 
 let particulasHUD = [];
 
+// estado UI tabla logros
+let tablaLogrosExpandida = true;
+let tablaLogrosAltoActual = 170;
 
 ///////////////////////////   IMAGENES Y SONIDO  ///////////////////////////
 function preload() {
@@ -312,6 +315,17 @@ function keyPressed() {
 function mousePressed() {
   if (gameState !== "juego") return;
 
+  // Detectar clic en el HEADER de la tabla de logros (para abrir/cerrar)
+  let tablaW = 240;
+  let tablaX = width - tablaW - 20;
+  let tablaY = 20;
+  let headerH = 34;
+
+  if (mouseX > tablaX && mouseX < tablaX + tablaW && mouseY > tablaY && mouseY < tablaY + headerH) {
+    tablaLogrosExpandida = !tablaLogrosExpandida;
+    return; // Evitamos que dispare al hacer clic en la UI
+  }
+
   let objetivoX = mouseX + camXGlobal;
   let objetivoY = mouseY + camYGlobal;
   let dx = objetivoX - x;
@@ -466,6 +480,8 @@ function resetGame() {
   // indicadores
   fuegoActivo = false;
   puedePlantar = false;
+  tablaLogrosExpandida = true; // Resetear tabla abierta
+  tablaLogrosAltoActual = 170;
 
   // reiniciar contadores de logros
   riegosLocales = 0;
@@ -601,28 +617,40 @@ function dibujarTablaLogros() {
   push();
   // dimensiones y posición
   let tablaW = 240;
-  let tablaH = 170;
+  // let tablaH = 170;
+  let alturaMaxima = 170;
   let headerH = 34;
-  let margen = 2;
+ //let margen = 2;
 
   let tablaX = width - tablaW - 20;
   let tablaY = 20;
 
+  //  LÓGICA DE ANIMACIÓN abrir/cerrar
+  let targetH = tablaLogrosExpandida ? alturaMaxima : headerH;
+  // Interpolación lineal (lerp) para suavizar el cambio de altura (0.15 es la velocidad)
+  tablaLogrosAltoActual = lerp(tablaLogrosAltoActual, targetH, 0.15);
+  
+  let tablaH = tablaLogrosAltoActual; 
+
   let colorHeader = color(70); // franja superior
   let colorCuerpo = color(40, 40, 40, 170); // Cuerpo semi-transparente
 
+  // header
   noStroke();
   fill(colorHeader);
   rect(tablaX, tablaY, tablaW, headerH, 10, 10, 0, 0);
 
-  fill(colorCuerpo);
-  rect(
-    tablaX,
-    tablaY + headerH,
-    tablaW,
-    tablaH - headerH,
-    0, 0, 10, 10 // Redondeado solo abajo
-  );
+  // Solo dibujamos el cuerpo si hay altura suficiente
+  if (tablaH > headerH + 1) {
+    fill(colorCuerpo);
+    rect(
+      tablaX,
+      tablaY + headerH,
+      tablaW,
+      tablaH - headerH,
+      0, 0, 10, 10 // Redondeado solo abajo
+    );
+  }
 
   // título
   fill(255);
@@ -642,55 +670,58 @@ function dibujarTablaLogros() {
   }
 
   // ===== LISTA DE LOGROS =====
-  fill(255);
-  textSize(13);
-  textAlign(LEFT, TOP);
+  // Solo mostrar texto si la tabla está casi totalmente desplegada
+  if (tablaH > alturaMaxima - 40) {
+    fill(255);
+    textSize(13);
+    textAlign(LEFT, TOP);
 
-  let y = tablaY + headerH + 10;
-  let x = tablaX + 12;
-  // 1. Topadoras
-  let okTop = topadorasLocales >= REQ.topadoras;
-  text(
-    (okTop ? "✓ " : "□ ") +
-    `Eliminar topadoras (${topadorasLocales}/${REQ.topadoras})`,
-    tablaX + 10, y
-  );
-  y += 22;
+    let y = tablaY + headerH + 10;
+    let x = tablaX + 12;
+    // 1. Topadoras
+    let okTop = topadorasLocales >= REQ.topadoras;
+    text(
+      (okTop ? "✓ " : "□ ") +
+      `Eliminar topadoras (${topadorasLocales}/${REQ.topadoras})`,
+      tablaX + 10, y
+    );
+    y += 22;
 
-  // 2. Incendios
-  let okFuego = fuegosLocales >= REQ.fuegos_apagados;
-  text(
-    (okFuego ? "✓ " : "□ ") +
-    `Apagar incendios (${fuegosLocales}/${REQ.fuegos_apagados})`,
-    tablaX + 10, y
-  );
-  y += 22;
+    // 2. Incendios
+    let okFuego = fuegosLocales >= REQ.fuegos_apagados;
+    text(
+      (okFuego ? "✓ " : "□ ") +
+      `Apagar incendios (${fuegosLocales}/${REQ.fuegos_apagados})`,
+      tablaX + 10, y
+    );
+    y += 22;
 
-  // 3. Riegos
-  let okRiego = riegosLocales >= REQ.riegos;
-  text(
-    (okRiego ? "✓ " : "□ ") +
-    `Regar árboles (${riegosLocales}/${REQ.riegos})`,
-    tablaX + 10, y
-  );
-  y += 22;
+    // 3. Riegos
+    let okRiego = riegosLocales >= REQ.riegos;
+    text(
+      (okRiego ? "✓ " : "□ ") +
+      `Regar árboles (${riegosLocales}/${REQ.riegos})`,
+      tablaX + 10, y
+    );
+    y += 22;
 
-  // 4. Plantar árboles
-  let okPlantar = arbolesLocales >= REQ.arboles_plantados;
-  text(
-    (okPlantar ? "✓ " : "□ ") +
-    `Plantar árboles (${arbolesLocales}/${REQ.arboles_plantados})`,
-    tablaX + 10, y
-  );
-  y += 22;
+    // 4. Plantar árboles
+    let okPlantar = arbolesLocales >= REQ.arboles_plantados;
+    text(
+      (okPlantar ? "✓ " : "□ ") +
+      `Plantar árboles (${arbolesLocales}/${REQ.arboles_plantados})`,
+      tablaX + 10, y
+    );
+    y += 22;
 
-  // 5. Animal
-  let okAnimal = animalesLocales >= REQ.animales_ayudados;
-  text(
-    (okAnimal ? "✓ " : "□ ") +
-    `Ayudar animal (${animalesLocales}/${REQ.animales_ayudados})`,
-    tablaX + 10, y
-  );
+    // 5. Animal
+    let okAnimal = animalesLocales >= REQ.animales_ayudados;
+    text(
+      (okAnimal ? "✓ " : "□ ") +
+      `Ayudar animal (${animalesLocales}/${REQ.animales_ayudados})`,
+      tablaX + 10, y
+    );
+  }
 
   pop();
 }
@@ -976,8 +1007,19 @@ function actualizarObjetosColision() {
   // 1. Árboles grandes (Etapa 3)
   for (let a of arboles) {
     if (a.vivo && a.etapa === 3) {
-      // Caja de colisión MUY pequeña (tronco) para permitir que la topadora se acerque y lo tale
-      objetos.push({ x: a.x - 5, y: a.y - 5, w: 10, h: 10, tipo: 'arbol' });
+      // Verificar si hay una topadora cerca (para desactivar colisión y dejar que lo tale)
+      let topadoraCerca = false;
+      for (let t of topadoras) {
+        if (t.active && !t.dead && dist(t.x, t.y, a.x, a.y) < 100) {
+          topadoraCerca = true;
+          break;
+        }
+      }
+
+      // Si NO hay topadora cerca, el árbol es sólido para el jugador
+      if (!topadoraCerca) {
+        objetos.push({ x: a.x - 15, y: a.y - 15, w: 30, h: 30, tipo: 'arbol' });
+      }
     }
   }
 

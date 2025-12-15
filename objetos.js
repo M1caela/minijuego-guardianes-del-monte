@@ -229,8 +229,8 @@ function spawnTopadora() {
   totalTopadorasSpawned++;
   console.log("Topadoras spawmeadas:", totalTopadorasSpawned);
 }
+//////////////////////////////////////////          PROYECTILES            //////////////////////////////////////////
 
-// tiro hacia las topadoras 
 function actualizarProyectiles() {
   if (!topadoras) topadoras = []; // seguridad
   for (let i = proyectiles.length - 1; i >= 0; i--) {
@@ -264,6 +264,7 @@ function actualizarProyectiles() {
   } // fin for proyectiles
 }
 
+// TIRO  hacia las topadoras // 
 function dibujarProyectiles() {
   for (let p of proyectiles) {
     push();
