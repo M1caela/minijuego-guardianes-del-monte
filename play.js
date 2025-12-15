@@ -12,7 +12,7 @@ let fondoGanar;
 let fondoPerder;
 let topadoraImg; 
 let imgBrote, imgArbolMedio, imgArbolGrande; 
-let estrellaGif;
+let estrellaLogros;
 let coatiLastimado, coatiCurado;
 let fuegoImg;
 
@@ -43,7 +43,7 @@ let aguaProyectiles = [];
 
 // funcion plantar nuevo arbol (luego de apagar incendio)
 let puedePlantar = false;
-let maxNuevosArboles = 5;  // límite de nuevos árboles que se puede plantar
+let maxNuevosArboles = 10;  // límite de nuevos árboles que se puede plantar
 let nuevosPlantados = 0;   // contador de nuevos plantados 
 let initialArbolesCount = 0; //  árboles iniciales
 
@@ -68,8 +68,6 @@ let ranking = []; // guardar los datos JSON
 let inicioPartida = 0;
 let tiempoMaximo = 5 * 60 * 1000; // 5 minutos en ms
 let tiempoRestante = tiempoMaximo;
-
-
 
 
 ///////////////////////////   IMAGENES Y SONIDO  ///////////////////////////
@@ -106,8 +104,8 @@ function preload() {
   fondoGanar = loadImage("img/fondo-ganar.jpg");
   fondoPerder = loadImage("img/fondo-perder.jpg");
 
-  // gif animacion logro
-  estrellaGif = loadImage("img/logro-completado.gif");
+  // logro completado
+  estrellaLogros = loadImage("img/logro-completado.png");
 
   /// SONIDOS ///
   cancionAmbiente = loadSound("sonido/ambiente.mp3");
@@ -131,7 +129,6 @@ function setup() {
     { x: 395, y: 510, w: 100, h: 110 }, // Arbol 2 izq
   ]; 
   
-  // initArboles();
   controlarMusica();
   
   // INPUT de nombre (pantalla elegir)
@@ -443,7 +440,6 @@ function resetGame() {
 function mostrarInput() {
   inputNombre.show();
   botonSiguiente.show();
-  // ubicarInput();
 }
 
 function ocultarInput() {
@@ -513,7 +509,7 @@ function cargarRanking() {
 function botonVerRanking() {
   if (botonRanking) {
     botonRanking.show();
-    botonRanking.position(width / 2 - 60, height / 2 + 110);
+    botonRanking.position(width / 2 - 60, height / 2 + 210);
   }
 }
 
@@ -563,7 +559,7 @@ function dibujarTablaLogros() {
   textSize(16);
   textAlign(LEFT, TOP);
   text("Logros", tablaX + 10, tablaY + 8);
-
+  
   textSize(13);
   let y = tablaY + 36;
 
@@ -613,21 +609,6 @@ function dibujarTablaLogros() {
 
   pop();
 }
-
-// conexion con mysql - actualizar logros
-function enviarAccionAlServidor(tipo) {
-  if (!partidaId) return; // protección
-  fetch("actualizarTareas.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      partida_id: partidaId,
-      accion: tipo
-    })
-  });
-}
-
-// TABLA DE LOGROS //
 
 function actualizarLogros() {
 
@@ -687,10 +668,23 @@ function actualizarLogros() {
     logrosCompletados.animal = true;
 
     mostrarAnimacionLogro = true;
-    iniciAnimacionLogro = millis();
+    inicioAnimacionLogro = millis();
     logroActual = "animal";
   }
 
+}
+
+// conexion con mysql - actualizar logros
+function enviarAccionAlServidor(tipo) {
+  if (!partidaId) return; // protección
+  fetch("actualizarTareas.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      partida_id: partidaId,
+      accion: tipo
+    })
+  });
 }
 
 function todosLosLogrosCompletados() {
@@ -698,7 +692,6 @@ function todosLosLogrosCompletados() {
 }
 
 // ANIMACION AL CONSEGUIR LOGRO //
-
 function dispararAnimacionLogro(tipo) {
   logroActual = tipo;
   mostrarAnimacionLogro = true;
@@ -708,17 +701,36 @@ function dispararAnimacionLogro(tipo) {
 function gestionarAnimacionLogro() {
   if (!mostrarAnimacionLogro) return;
 
-  // Calcular cuánto tiempo pasó
+  // Calcular tiempo 
   let tiempoPasado = millis() - inicioAnimacionLogro;
+  let duracionFadeIn = 1500; // 1.5 segundos
+  let duracionHold = 3000;   
+  let duracionFadeOut = 1500;
+  let duracionTotal = duracionFadeIn + duracionHold + duracionFadeOut;
 
   // Si pasó menos de x segundos dibujar
-  if (tiempoPasado < 5000) {
+  if (tiempoPasado < duracionTotal) {
+    let alpha = 0;
+    let tam = 420; // Tamaño base 
+    
+    if (tiempoPasado < duracionFadeIn) {
+      // Fade In (aparece)
+      alpha = map(tiempoPasado, 0, duracionFadeIn, 0, 255);
+    } else if (tiempoPasado < duracionFadeIn + duracionHold) {
+      // Mantener visible con "latido"
+      alpha = 255;
+      let pulso = sin(frameCount * 0.1) * 10; // Oscila +/- 10px
+      tam = 400 + pulso;
+    } else {
+      // Fade Out (desvanece)
+      alpha = map(tiempoPasado, duracionFadeIn + duracionHold, duracionTotal, 255, 0);
+    }
+
     push();
     imageMode(CENTER);
+    tint(255, alpha); // Aplicar transparencia
+    image(estrellaLogros, width/2, height/2+100, tam, tam);
     noTint();
-
-    image(topadoraImg, 400,300, 350, 350); 
-    
     pop();
   } 
   else {

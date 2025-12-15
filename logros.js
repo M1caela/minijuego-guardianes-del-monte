@@ -1,5 +1,3 @@
-// logros.js
-
 let mostrarAnimacionLogro = false;
 let inicioAnimacionLogro = 0;
 let DURACION_ANIMACION = 6000; // 6 segundos
@@ -37,6 +35,4 @@ const REQ = {
   arboles_plantados: 3,
   animales_ayudados: 1
 };
-
-
 

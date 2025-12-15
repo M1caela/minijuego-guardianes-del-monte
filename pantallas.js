@@ -183,9 +183,9 @@ function pantallaPerderTiempo() {
     textAlign(CENTER, CENTER);
     fill(255);
     textSize(40);
-    text("Se acabó el tiempo\ny el monte no fue restaurado.", width / 2, height / 2 - 50);
-    textSize(30);
-    text("¡Seguí intentando!", width / 2, height / 2 - 30);
+    text("¡Se acabó el tiempo!", width / 2, height / 2 - 50);
+    textSize(22);
+    text("El monte no fue restaurado, seguí intentando...", width / 2, height / 2);
     textSize(24);
     text("Presioná ESPACIO", width / 2, height / 2 + 60);
   pop();
@@ -212,7 +212,7 @@ function pantallaCreditos() {
     push();
       botonVerRanking(); // mostrar botón ranking
 
-      
+
       textSize(22);
       text("Presioná I para volver al inicio.", width/2, 400);
       
