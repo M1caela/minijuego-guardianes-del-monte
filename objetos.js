@@ -506,6 +506,17 @@ function regarArboles() {
         cambiarSaludMonte(+5);
         riegosLocales++;
         enviarAccionAlServidor("riego");
+
+        // Evitar que el jugador quede atrapado dentro del árbol al crecer (empujarlo fuera de colision)
+        let dx = x - a.x;
+        let dy = y - a.y;
+        let distSegura = 55; // 50px + 5px de margen
+        if (abs(dx) > abs(dy)) {
+          x = a.x + (dx >= 0 ? distSegura : -distSegura);
+        } else {
+          y = a.y + (dy >= 0 ? distSegura : -distSegura);
+        }
+
       }
       // solo regar 1 árbol por tecla
       logros.riegos.contador++;
