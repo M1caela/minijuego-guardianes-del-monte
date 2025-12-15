@@ -60,6 +60,7 @@ function pantallaJuego() {
   let camY = constrain(y - height / 2, 0, mapaAlto - height);
   
   push();
+    actualizarObjetosColision();
     translate(-camX, -camY); // mueve el "mundo" para que el jugador quede centrado al mover vista
     
     // guardo global para mapear mouse 

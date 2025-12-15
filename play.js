@@ -24,6 +24,7 @@ let mapaAlto = 900;
 // objetos 
 let arboles = [];
 let objetos = []
+let objetosEstaticos = []; // Lista fija de edificios
 
 // personajes
 let avatar = 0; 
@@ -128,7 +129,7 @@ function setup() {
   textAlign(CENTER, CENTER);
   
   // objeos que ocupan lugar en el mapa 
-  objetos = [
+  objetosEstaticos = [
     { x: 40, y: 0, w: 460, h: 150 }, // Casa grande
     { x: 1040, y: 300, w: 200, h: 115 }, // Casita
     { x: 1010, y: 550, w: 110, h: 130 }, // Arbol 1 der
@@ -926,6 +927,36 @@ function checkGameStateSounds() {
       }
     }
     prevGameState = gameState;
+  }
+}
+
+///////////////////////////   COLISIONES DINÁMICAS   ///////////////////////////
+
+function actualizarObjetosColision() {
+  // Reiniciar objetos con los estáticos
+  objetos = [...objetosEstaticos];
+
+  // 1. Árboles grandes (Etapa 3)
+  for (let a of arboles) {
+    if (a.vivo && !a.isInitial && a.etapa === 3) {
+      // Caja de colisión centrada en la base del árbol (aprox 60x60)
+      objetos.push({ x: a.x - 30, y: a.y - 30, w: 60, h: 60, tipo: 'arbol' });
+    }
+  }
+
+  // 2. Topadoras activas
+  for (let t of topadoras) {
+    if (t.active && !t.dead) {
+      // Caja de colisión para la topadora (aprox 80x60)
+      // Agregamos referencia 'ref' para que la topadora no choque consigo misma
+      objetos.push({ x: t.x - 40, y: t.y - 30, w: 80, h: 60, tipo: 'topadora', ref: t });
+    }
+  }
+
+  // 3. Animal (si está en el mapa)
+  if (animalActivo && animal) {
+    // Caja de colisión para el animal (aprox 80x80)
+    objetos.push({ x: animal.x - 40, y: animal.y - 40, w: 80, h: 80, tipo: 'animal' });
   }
 }
 

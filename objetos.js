@@ -81,8 +81,8 @@ class Topadora {
       let vy = (dy / mag) * this.speed;
 
       // Movimiento independiente en ejes (permite deslizarse)
-      if (posicionValida(this.x + vx, this.y)) this.x += vx;
-      if (posicionValida(this.x, this.y + vy)) this.y += vy;
+      if (posicionValida(this.x + vx, this.y, this)) this.x += vx;
+      if (posicionValida(this.x, this.y + vy, this)) this.y += vy;
 
       // si llegó al árbol > talar
       if (dist(this.x, this.y, target.x, target.y) < 40) {
@@ -104,8 +104,8 @@ class Topadora {
         let vy = sin(frameCount * 0.02 + this.x*0.001) * 0.5;
 
         // Movimiento independiente
-        if (posicionValida(this.x + vx, this.y)) this.x += vx;
-        if (posicionValida(this.x, this.y + vy)) this.y += vy;
+        if (posicionValida(this.x + vx, this.y, this)) this.x += vx;
+        if (posicionValida(this.x, this.y + vy, this)) this.y += vy;
       }
     }
 
@@ -620,9 +620,14 @@ function intentarAyudarAnimal() {
 }
 
 // Función auxiliar para verificar colisiones con el entorno
-function posicionValida(x, y) {
+function posicionValida(x, y, ignorar = null) {
   let radio = 35; 
+  
+  // Verificar colisión con TODOS los objetos (estáticos + dinámicos)
   for (let o of objetos) {
+    // Si el objeto es la misma entidad que pregunta (ej. topadora a sí misma), ignorar
+    if (ignorar && o.ref === ignorar) continue;
+
     if (x > o.x - radio && x < o.x + o.w + radio &&
         y > o.y - radio && y < o.y + o.h + radio) {
       return false; // Hay colisión
