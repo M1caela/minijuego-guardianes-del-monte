@@ -57,9 +57,14 @@ function moverJugador() {
 
   // Verificar colisión con cada obstáculo
   let colision = false;
+  let hitW = 40; // Ancho de la caja de colisión del jugador
+  let hitH = 40; // Alto de la caja de colisión del jugador
+
   for (let i = 0; i < objetos.length; i++) {
     let o = objetos[i];
-    if (nuevoX + 50 > o.x && nuevoX < o.x + o.w && nuevoY + 50 > o.y && nuevoY < o.y + o.h) {
+    // Chequeo AABB centrado (nuevoX/Y son el centro del jugador)
+    if (nuevoX + hitW/2 > o.x && nuevoX - hitW/2 < o.x + o.w && 
+        nuevoY + hitH/2 > o.y && nuevoY - hitH/2 < o.y + o.h) {
       colision = true;
       break;
     }

@@ -938,7 +938,7 @@ function actualizarObjetosColision() {
 
   // 1. Árboles grandes (Etapa 3)
   for (let a of arboles) {
-    if (a.vivo && !a.isInitial && a.etapa === 3) {
+    if (a.vivo && a.etapa === 3) {
       // Caja de colisión centrada en la base del árbol (aprox 60x60)
       objetos.push({ x: a.x - 30, y: a.y - 30, w: 60, h: 60, tipo: 'arbol' });
     }

@@ -185,6 +185,9 @@ class Topadora {
 // iniciar topadodoras, se mueven hacia arboles y tienen sist de vida
 function initTopadoras() {
   topadoras = [];
+  // Cargar objetos estáticos temporalmente para validar spawn inicial
+  if (typeof objetosEstaticos !== 'undefined') objetos = [...objetosEstaticos];
+
   let n = floor(random(2, 4)); 
   for (let i = 0; i < n; i++) {
     // Buscar posición válida para no spawnear dentro de objetos
