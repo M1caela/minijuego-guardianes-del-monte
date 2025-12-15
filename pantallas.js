@@ -23,7 +23,15 @@ function pantallaInicio() {
 
     push();
       textSize(20);
-      text("Presioná ESPACIO para comenzar", width/2, 400);
+      
+      if (botonComenzar) {
+        botonComenzar.show();
+        botonComenzar.position(width / 2 - 80, 380); // Centrado aproximado
+        // Efecto de latido
+        let escala = 1 + sin(frameCount * 0.1) * 0.05;
+        botonComenzar.style("transform", `scale(${escala})`);
+      }
+
       text("Presioná C para ver los créditos", width/2, 440);
     pop();
   pop();
@@ -155,7 +163,7 @@ function pantallaGanar() {
     textSize(40);
     text("¡El monte respira otra vez!", width / 2, height / 2 - 50);
     textSize(24);
-    text("Presioná ESPACIO", width / 2, height / 2 + 60);
+    text("▸ Presioná ESPACIO ◂", width / 2, height / 2 + 60);
   pop();
 }
 
@@ -170,7 +178,7 @@ function pantallaPerder() {
     textSize(40);
     text("El monte fue destruido.", width / 2, height / 2 - 50);
     textSize(24);
-    text("Presioná ESPACIO", width / 2, height / 2 + 60);
+    text("▸ Presioná ESPACIO ◂", width / 2, height / 2 + 60);
   pop();
 }
 
@@ -187,7 +195,7 @@ function pantallaPerderTiempo() {
     textSize(22);
     text("El monte no fue restaurado, seguí intentando...", width / 2, height / 2);
     textSize(24);
-    text("Presioná ESPACIO", width / 2, height / 2 + 60);
+    text("▸ Presioná ESPACIO ◂", width / 2, height / 2 + 60);
   pop();
 }
 
@@ -214,7 +222,7 @@ function pantallaCreditos() {
 
 
       textSize(22);
-      text("Presioná I para volver al inicio.", width/2, 400);
+      text("▸ Presioná I para volver al inicio. ◂", width/2, 400);
       
     pop();
   pop();
@@ -226,21 +234,18 @@ function pantallaInformacion() {
     background(20, 40, 20);
     fill('white'); 
     anchoMaxTxt = 660;
-    let w = (100);
+    let w = (78);
     textSize(15); textWrap(WORD); textAlign(LEFT, TOP); textFont("roboto mono");
-    text("El cuidado ambiental no es solo una responsabilidad colectiva: es una necesidad urgente. \n En Argentina, la deforestación industrial avanza a un ritmo alarmante, amenazando la biodiversidad y los ecosistemas que sostienen la vida. ", w, 70, anchoMaxTxt);
-  
-    text("Según datos del Min de Ambiente y Desarrollo, entre 1998 y 2023 el país perdió +8M de hectáreas de bosques nativos, principalmente en  provincias del norte. Las causas principales son la expansión agroganadera y la tala ilegal, en muchos casos para sembrar soja o criar ganado. \n A esto se suman los incendios forestales, cada vez más frecuentes. En 2023, el Servicio Nacional de Manejo del Fuego (SNMF) registró +1,3M de hectáreas afectadas por incendios en todo el país, impulsados por el cambio climático, las sequías prolongadas y las quemas intencionales.", w, 210, anchoMaxTxt);
-   
-  text("La deforestación y los incendios no solo destruyen árboles: afectan el equilibrio del suelo, alteran los ciclos del agua y aumentan la temperatura global. Cada árbol que cae implica menos oxígeno, menos sombra, menos vida.", w, 360, anchoMaxTxt);
-    
-  text("Proteger el monte es proteger el futuro. Reforestar, reducir el consumo de productos que provienen de la tala indiscriminada y exigir políticas ambientales efectivas son pasos fundamentales.", w, 440, anchoMaxTxt);
+    text("El cuidado ambiental no es solo una responsabilidad colectiva: es una necesidad urgente. \n\n En Argentina, la deforestación industrial avanza a un ritmo alarmante, amenazando la biodiversidad y los ecosistemas que sostienen la vida. ", w, 70, anchoMaxTxt);
+    text("Según datos del Min de Ambiente y Desarrollo, entre 1998 y 2023 el país perdió +8M de hectáreas de bosques nativos. Las causas principales son la expansión agroganadera y la tala ilegal.\n A esto se suman los incendios forestales, cada vez más frecuentes. En 2023, el Servicio Nacional de Manejo del Fuego registró +1,3M de hectáreas afectadas por incendios en todo el país, impulsados principalmente por sequías prolongadas y  quemas intencionales.", w,178, anchoMaxTxt);
+    text("La deforestación y los incendios no solo destruyen bosques: afectan el equilibrio del suelo, alteran los ciclos del agua, influyen en la calidad de vida de la fauna autóctona y aumentan la temperatura global.", w, 335, anchoMaxTxt);
+    text("¡Proteger el monte es proteger el futuro! Reforestar, reducir el consumo de productos que provienen de la tala indiscriminada y exigir políticas ambientales efectivas son pasos fundamentales.", w, 418, anchoMaxTxt);
   pop();
   
   push();
     textAlign(CENTER);
     textSize(17); fill('white'); 
-    text("Presioná C para ver los créditos y volver al inicio", width / 2, 530);
+    text("▸ Presioná C para ver los créditos y volver al inicio ◂", width / 2, 530);
   pop();
   
 }

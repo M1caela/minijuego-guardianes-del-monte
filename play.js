@@ -59,6 +59,7 @@ let nombreUsuario = "";
 let botonSiguiente;
 let botonRanking;
 let botonOrdenar;
+let botonComenzar;
 let ordenRanking = 'DESC'; // Por defecto mayor a menor
 let avatarElegido = false;
 
@@ -169,6 +170,16 @@ function setup() {
   botonOrdenar.style("font-size", "14px"); // Un poco más chico
   botonOrdenar.hide();
   botonOrdenar.mousePressed(toggleOrdenRanking);
+
+  // BOTÓN COMENZAR (Inicio)
+  botonComenzar = createButton("¡COMENZAR!");
+  botonComenzar.class("btn-siguiente"); // Usamos la misma clase para mantener estilo
+  botonComenzar.style("position", "absolute");
+  botonComenzar.style("font-size", "24px"); // Un poco más grande
+  botonComenzar.hide();
+  botonComenzar.mousePressed(() => {
+    gameState = "elegirJugador";
+  });
 }
 
 
@@ -178,7 +189,8 @@ function draw() {
 
   // logica de estados //
   if (gameState === "inicio") {
-     pantallaInicio();
+    pantallaInicio();
+
   } 
   else if (gameState === "elegirJugador") {
     pantallaElegir();
@@ -454,6 +466,7 @@ function resetGame() {
 function mostrarInput() {
   inputNombre.show();
   botonSiguiente.show();
+  if (botonComenzar) botonComenzar.hide();
 }
 
 function ocultarInput() {
@@ -461,6 +474,7 @@ function ocultarInput() {
   botonSiguiente.hide();
   if (botonRanking) botonRanking.hide();
   if (botonOrdenar) botonOrdenar.hide();
+  if (botonComenzar) botonComenzar.hide();
 }
 
 function verificarCamposCompletos() {
